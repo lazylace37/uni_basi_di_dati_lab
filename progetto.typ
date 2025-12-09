@@ -23,7 +23,12 @@ Contesto: industria cinematografica
   [],
   [Film],
 
+  [Copia fisica di un Film], [], [], [Film, Cliente],
   [Azienda Produttrice], [Produce uno o più film], [], [Film],
+  [Cliente],
+  [Noleggia una o più copie fisiche di film],
+  [Cliente Registrato],
+  [Film],
 )
 
 === Strutturazione dei Requisiti
@@ -42,23 +47,22 @@ Contesto: industria cinematografica
   table(
     columns: 1fr,
     table.header(table.cell(align: center)[*Frasi relative a film*]),
-    [Ogni film sia identificato univocamente dal suo titolo
-      e dall'anno di produzione (assumiamo che in uno stesso
-      anno non possano venir prodotti due o più film con lo
-      stesso titolo, ma ammettiamo che film con lo stesso
-      titolo possano essere prodotti in anni diversi, come
-      accade nel caso dei remake). Ogni film abbia una durata
-      espressa in minuti, un’unica azienda produttrice e sia
-      classificato come appartenente ad uno o più generi
-      (commedia, thriller, film dell'orrore, fantasy, ..) Ogni
-      film abbia uno o più registi e zero, uno o più autori
-      che vi recitano. Ogni film sia caratterizzato da una
-      breve descrizione della trama. Infine, ogni film abbia
-      zero o più frasi significative, ciascuna pronunciata da
-      uno degli attori che recitano nel film (assumiamo che
-      alcuni attori possano pronunciare più frasi
-      significative, altri una sola frase significativa, altri
-      ancora nessuna).],
+    [
+      - Ogni film sia identificato univocamente dal suo titolo e dall'anno di
+        produzione (assumiamo che in uno stesso anno non possano venir prodotti
+        due o più film con lo stesso titolo, ma ammettiamo che film con lo
+        stesso titolo possano essere prodotti in anni diversi, come accade nel
+        caso dei remake).
+      - Ogni film abbia una durata espressa in minuti, un’unica azienda
+        produttrice e sia classificato come appartenente ad uno o più generi
+        (commedia, thriller, film dell'orrore, fantasy, ..)
+      - Ogni film abbia uno o più registi e zero, uno o più autori che vi
+        recitano. Ogni film sia caratterizzato da una breve descrizione della
+        trama. Infine, ogni film abbia zero o più frasi significative, ciascuna
+        pronunciata da uno degli attori che recitano nel film (assumiamo che
+        alcuni attori possano pronunciare più frasi significative, altri una
+        sola frase significativa, altri ancora nessuna).
+    ],
   ),
   table(
     columns: 1fr,
@@ -88,6 +92,17 @@ Contesto: industria cinematografica
       e abbiano un unico recapito. Ogni azienda produttrice
       produca uno o più film.],
   ),
+  table(
+    columns: 1fr,
+    table.header(table.cell(
+      align: center,
+    )[*Frasi relative a videonoleggio (aggiunta alla consegna)*]),
+    [Si vuole gestire il videonoleggio di film da parte dei clienti registrati.
+      Un cliente può noleggiare una o più copie fisiche di un film per un certo
+      periodo di tempo limitato. Se una copia fisica risulta prestata, non può
+      essere rinoleggiata prima che essa venga restituita. Si vuole ricordare lo
+      storico dei prestiti dei film da parte dei clienti.],
+  ),
 )
 
 === Operazioni
@@ -96,14 +111,41 @@ Contesto: industria cinematografica
   dir: ttb,
   spacing: 1em,
   table(
-    columns: (1fr, auto),
-    table.header[*Operazione 1*][*Frequenza*],
-    [#lorem(10)], [n volte al giorno],
+    columns: 1fr,
+    table.header[*Operazione 1*],
+    [Ottieni il numero medio di attori che hanno partecipato in film di uno
+      specifico genere.],
+  ),
+  table(
+    columns: 1fr,
+    table.header[*Operazione 2*],
+    [Ottieni, per ogni categoria di film, il numero medio di attori
+      partecipanti.],
+  ),
+  table(
+    columns: 1fr,
+    table.header[*Operazione 3*],
+    [Ottieni il regista che ha diretto il numero massimo di film.],
+  ),
+  table(
+    columns: 1fr,
+    table.header[*Operazione 4*],
+    [Ottieni tutti gli attori che hanno recitato solo a film della stessa casa
+      produttrice.],
   ),
   table(
     columns: (1fr, auto),
-    table.header[*Operazione 2*][*Frequenza*],
-    [#lorem(10)], [n volte al giorno],
+    table.header[*Operazione 5*][*Frequenza*],
+    [Inserimento di nuovo film prodotto da una data casa produttrice.],
+    [57 inserimenti al giorno #footnote[Dal sito web IMDB, risulta che nell'anno 2024
+        sono stati rilasciati 20844 film, ovvero circa 57 film al giorno.]],
+  ),
+  table(
+    columns: (1fr, auto),
+    table.header[*Operazione 6*][*Frequenza*],
+    [Calcola il numero di film prodotti da una data casa produttrice.],
+    [5 richieste al giorno #footnote[Valore ipotetico - media rispetto a tutte
+        le case produttrici.]],
   ),
 )
 
