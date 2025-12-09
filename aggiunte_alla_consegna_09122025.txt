@@ -1,0 +1,14 @@
+Aggiunta consegna:
+- Videonoleggio con clienti che noleggiano copie fisiche di film + storico del noleggio
+
+Operazioni:
+- numero medio di attori in un film horror
+- per ogni categoria di film, il numero medio di attori
+- il regista che ha diretto il numero massimo di film
+- tutti gli attori che hanno recitato solo a film della stessa casa produttrice
+
+Attributo derivato:
+- n film prodotti da casa produttrice
+  - inserimento di nuovo film di casa produttrice x
+  - calcola n film prodotti da casa produttrice
+- n film di attore
