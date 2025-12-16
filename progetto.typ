@@ -159,6 +159,11 @@ Schema E-R.
 
 Vincoli di integrità.
 
+----
+Note:
+- entità "Frase Significativa" aggiunta al posto di attributo multivalore nella
+  relazione "Recita in".
+
 = Progettazione Logica
 
 == Ristrutturazione del Modello E-R
