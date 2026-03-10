@@ -157,14 +157,16 @@ Vincoli di integrità:
 - Cicli problematici:
   - Un attore può pronunciare una frase significativa solo in film in cui ha
     recitato
+- Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
+  venga resistituta
 
 Nota:
 - il ciclo regista - dirige - film - recita in - attore non è problematico,
   perché un attore può recitare in un film che dirige
 
-Note:
-- entità "Frase Significativa" aggiunta al posto di attributo multivalore nella
-  relazione "Recita in".
+// Note:
+// - entità "Frase Significativa" aggiunta al posto di attributo multivalore nella
+//   relazione "Recita in".
 
 = Progettazione Logica
 
