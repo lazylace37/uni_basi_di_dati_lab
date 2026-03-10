@@ -151,15 +151,17 @@ Contesto: industria cinematografica
 
 == Rappresentazione Concettuale dei Dati
 
-Scegliere la strategia di progetto: top-down, bottom-up o inside-out.
+TODO: Schema E-R.
 
-Uso di design pattern per risolvere problemi comuni.
+Vincoli di integrità:
+- Cicli problematici:
+  - Un attore può pronunciare una frase significativa solo in film in cui ha
+    recitato
 
-Schema E-R.
+Nota:
+- il ciclo regista - dirige - film - recita in - attore non è problematico,
+  perché un attore può recitare in un film che dirige
 
-Vincoli di integrità.
-
-----
 Note:
 - entità "Frase Significativa" aggiunta al posto di attributo multivalore nella
   relazione "Recita in".
