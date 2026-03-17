@@ -144,7 +144,7 @@ Contesto: industria cinematografica
     columns: (1fr, auto),
     table.header[*Operazione 6*][*Frequenza*],
     [Calcola il numero di film prodotti da una data casa produttrice.],
-    [5 richieste al giorno #footnote[Valore ipotetico - media rispetto a tutte
+    [50 richieste al giorno #footnote[Valore ipotetico - media rispetto a tutte
         le case produttrici.]],
   ),
 )
@@ -181,32 +181,32 @@ Il volume è la cardinalià attesa - il numero di istanze
 #table(
   columns: 3,
   table.header[*Concetto*][*Tipo*][*Volume*],
-  [Sede], [Entità], [10],
-  [...], [Relazione], [...],
+  [Film], [Entità], [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
+  [Produce], [Relazione], [730000],
 )
 
-==== Tavola delle Operazioni
+/*==== Tavola delle Operazioni
 
 #stack(
   dir: ttb,
   spacing: 2em,
   table(
     columns: (1fr, 1fr, 1fr, 1fr),
-    table.header(table.cell(align: center, colspan: 4)[*Operazione 1*]),
+    table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
     [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-    [Impiegato], [Entità], [1], [Lettura],
-    [Afferenza], [Relazione], [3], [Lettura],
+    [Azienda Produttrice], [Entità], [1], [Scrittura],
+    [Produce], [Relazione], [1], [Scrittura],
   ),
-)
+)*/
 
 === Analisi delle Ridondanze
 
-Trovare le ridondanze:
-- attributi derivabili:
-  - da altri attributi della stessa entità
-  - da altri attributi di altre entità o relazioni (es. aggregazioni)
-  - conteggio di occorrenze
-- relazioni derivabili: cicli
+// Trovare le ridondanze:
+// - attributi derivabili:
+//   - da altri attributi della stessa entità
+//   - da altri attributi di altre entità o relazioni (es. aggregazioni)
+//   - conteggio di occorrenze
+// - relazioni derivabili: cicli
 
 Per ogni ridondanza, valutiamo le prestazioni nel caso in cui la teniamo e nel
 caso in cui la togliamo (tavola degli accessi).
@@ -223,23 +223,25 @@ caso in cui la togliamo (tavola degli accessi).
       spacing: 1em,
       table(
         columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 1*]),
+        table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
         [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [Impiegato], [Entità], [1], [Lettura],
-        [Afferenza], [Relazione], [3], [Lettura],
+        [Film], [Entità], [1], [Scrittura],
+        [Azienda Produttrice], [Entità], [1], [Lettura],
+        [Azienda Produttrice], [Entità], [1], [Scrittura],
+        [Produce], [Relazione], [1], [Scrittura],
       ),
-      [Totale = (n° letture \* costo letture + n° scritture \* costo scritture) \* frequenza = ],
+      [Totale = (3 \* costo letture + 1 \* costo scritture) \* frequenza = (3 \* 1 + 1 \* 3)  \* 57 = 342 unità di costo al giorno],
     ),
     stack(
       dir: ttb,
       spacing: 1em,
       table(
         columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 2*]),
+        table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
         [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [...], [...], [1], [Lettura],
+        [Azienda Produttrice], [Entità], [1], [Lettura],
       ),
-      [Totale = (n° letture \* costo letture + n° scritture \* costo scritture) \* frequenza = ],
+      [Totale = (1 \* costo letture + 0 \* costo scritture) \* frequenza = 1 \* 1 \* 50 = 50],
     ),
   ),
   stack(
@@ -250,28 +252,28 @@ caso in cui la togliamo (tavola degli accessi).
       spacing: 1em,
       table(
         columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 1*]),
+        table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
         [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [Impiegato], [Entità], [1], [Lettura],
-        [Afferenza], [Relazione], [3], [Lettura],
+        [Film], [Entità], [1], [Scrittura],
+        [Produce], [Relazione], [1], [Scrittura],
       ),
-      [Totale = (n° letture \* costo letture + n° scritture \* costo scritture) \* frequenza = ],
+      [Totale = (1 \* costo letture + 1 \* costo scritture) \* frequenza = (1 \* 1 + 1 \* 3)  \* 57 = 228 unità di costo al giorno],
     ),
     stack(
       dir: ttb,
       spacing: 1em,
       table(
         columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 2*]),
+        table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
         [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [...], [...], [1], [Lettura],
+        [Produce], [Relazione], [730000], [Lettura],
       ),
-      [Totale = (n° letture \* costo letture + n° scritture \* costo scritture) \* frequenza = ],
+      [Totale = (730000 \* costo letture + 0 \* costo scritture) \* frequenza = 730000 \* 1 \* 50 = 36500000 unità di costo al giorno],
     ),
   ),
 
-  [Totale = .. + ..], [Totale = .. + ..],
-  table.cell(colspan: 2)[Scegliamo di tenere/rimuovere la ridondanza.],
+  [Totale = 342 + 50 = 392], [Totale = 228 + 36500000 = 36500228],
+  table.cell(colspan: 2)[Scegliamo di mantenere la ridondanza.],
 )
 
 === Eliminazione delle Generalizzazioni
