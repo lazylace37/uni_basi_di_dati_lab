@@ -2,7 +2,8 @@
 #show: templ.with(
   title: "Progetto di Laboratorio di Basi di Dati",
   author: "",
-  font-size: 10pt,
+  font-size: 11pt,
+  font: "New Computer Modern",
 )
 
 = Progettazione Concettuale
@@ -16,15 +17,15 @@ Contesto: industria cinematografica
 #table(
   columns: (auto, auto, auto, auto),
   table.header[*Termine*][*Descrizione*][*Sinonimi*][*Collegamenti*],
-  [Film], [], [], [Attori, Azienda Produttice, Registi, Frasi Significative],
+  [Film], [], [], [Attori,\ Azienda Produttice,\ Registi,\ Frasi Significative],
   [Attore], [], [Autore], [Film],
   [Regista],
   [Dirige almeno un film, e può recitare in uno o più film],
   [],
   [Film],
 
-  [Copia fisica di un Film], [], [], [Film, Cliente],
-  [Azienda Produttrice], [Produce uno o più film], [], [Film],
+  [Copia fisica\ di un Film], [], [], [Film,\ Cliente],
+  [Azienda\ Produttrice], [Produce uno o più film], [], [Film],
   [Cliente],
   [Noleggia una o più copie fisiche di film],
   [Cliente Registrato],
@@ -158,16 +159,17 @@ Contesto: industria cinematografica
   ],
 )
 
-Vincoli di integrità:
+=== Vincoli di Integrità
+
 - Cicli problematici:
   - Un attore può pronunciare una frase significativa solo in film in cui ha
-    recitato
+    recitato.
 - Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
-  venga resistituta
+  venga restituita.
 
 Nota:
-- il ciclo regista - dirige - film - recita in - attore non è problematico,
-  perché un attore può recitare in un film che dirige
+- Il ciclo 'Regista - Dirige - Milm - Recita in - Attore' non è problematico,
+  perché un attore può recitare in un film che dirige.
 
 // Note:
 // - entità "Frase Significativa" aggiunta al posto di attributo multivalore nella
@@ -181,8 +183,6 @@ Nota:
 
 ==== Tavola dei Volumi
 
-Il volume è la cardinalià attesa - il numero di istanze
-
 #table(
   columns: 3,
   table.header[*Concetto*][*Tipo*][*Volume*],
@@ -191,6 +191,7 @@ Il volume è la cardinalià attesa - il numero di istanze
   [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
 
   [Produce], [Relazione], [730000],
+  // TODO: lo inseriamo anche per le altre?
 )
 
 /*==== Tavola delle Operazioni
@@ -216,73 +217,104 @@ Il volume è la cardinalià attesa - il numero di istanze
 //   - conteggio di occorrenze
 // - relazioni derivabili: cicli
 
-Per ogni ridondanza, valutiamo le prestazioni nel caso in cui la teniamo e nel
-caso in cui la togliamo (tavola degli accessi).
+Assumiamo un costo di un accesso in lettura di $1$, e in scrittura di $3$.
 
-#table(
-  columns: (1fr, 1fr),
-  table.header(table.cell(align: center, colspan: 2)[*Ridondanza 1*]),
-  [*Presenza di ridondanza*], [*Assenza di ridondanza*],
+==== Ridondanza 1: Attributo derivato "Numero di Film Prodotti"
+
+#block(breakable: false, grid(
+  columns: 1fr,
+  stroke: 1pt + black,
+  inset: 5pt,
+  [*Presenza di ridondanza*],
   stack(
     dir: ttb,
-    spacing: 2em,
-    stack(
-      dir: ttb,
-      spacing: 1em,
-      table(
-        columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
-        [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [Film], [Entità], [1], [Scrittura],
-        [Azienda Produttrice], [Entità], [1], [Lettura],
-        [Azienda Produttrice], [Entità], [1], [Scrittura],
-        [Produce], [Relazione], [1], [Scrittura],
-      ),
-      [Totale = (3 \* costo letture + 1 \* costo scritture) \* frequenza = (3 \* 1 + 1 \* 3)  \* 57 = 342 unità di costo al giorno],
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Film], [Entità], [1], [S],
+      [Azienda Produttrice], [Entità], [1], [L],
+      [Azienda Produttrice], [Entità], [1], [S],
+      [Produce], [Relazione], [1], [S],
     ),
-    stack(
-      dir: ttb,
-      spacing: 1em,
-      table(
-        columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
-        [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [Azienda Produttrice], [Entità], [1], [Lettura],
-      ),
-      [Totale = (1 \* costo letture + 0 \* costo scritture) \* frequenza = 1 \* 1 \* 50 = 50],
-    ),
-  ),
-  stack(
-    dir: ttb,
-    spacing: 2em,
-    stack(
-      dir: ttb,
-      spacing: 1em,
-      table(
-        columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
-        [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [Film], [Entità], [1], [Scrittura],
-        [Produce], [Relazione], [1], [Scrittura],
-      ),
-      [Totale = (1 \* costo letture + 1 \* costo scritture) \* frequenza = (1 \* 1 + 1 \* 3)  \* 57 = 228 unità di costo al giorno],
-    ),
-    stack(
-      dir: ttb,
-      spacing: 1em,
-      table(
-        columns: (1fr, 1fr, 1fr, 1fr),
-        table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
-        [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-        [Produce], [Relazione], [730000], [Lettura],
-      ),
-      [Totale = (730000 \* costo letture + 0 \* costo scritture) \* frequenza = 730000 \* 1 \* 50 = 36500000 unità di costo al giorno],
-    ),
+
+    $
+      "Totale" & = (3 * "CostoLettura" + 1 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (3 * 1 + 1 * 3) * 57 \
+      & = 342 "unità di costo al giorno"
+    $,
   ),
 
-  [Totale = 342 + 50 = 392], [Totale = 228 + 36500000 = 36500228],
-  table.cell(colspan: 2)[Scegliamo di mantenere la ridondanza.],
-)
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Azienda Produttrice], [Entità], [1], [L],
+    ),
+
+    $
+      "Totale" & = (1 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (1 * 1 + 0 * 3) * 50 \
+      & = 50 "unità di costo al giorno"
+    $,
+  ),
+
+  $"Totale" = 342 + 50 = 392 "unità di costo al giorno"$
+))
+
+#block(breakable: false, grid(
+  columns: 1fr,
+  stroke: 1pt + black,
+  inset: 5pt,
+  [*Assenza di ridondanza*],
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Film], [Entità], [1], [S],
+      [Produce], [Relazione], [1], [S],
+    ),
+
+    $
+      "Totale" & = (1 * "CostoLettura" + 1 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (1 * 1 + 1 * 3) * 57 \
+      & = 228 "unità di costo al giorno"
+    $,
+  ),
+
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Produce], [Relazione], [730000], [L],
+    ),
+
+    $
+      "Totale" & = (730000 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (730000 * 1 + 0 * 3) * 50 \
+      & = 36500000 "unità di costo al giorno"
+    $,
+  ),
+
+  $"Totale" = 228 + 36500000 = 36500228 "unità di costo al giorno"$
+))
+
+#box(
+  stroke: 1pt + black,
+  inset: 5pt,
+  width: 100%,
+)[Scegliamo di mantenere la ridondanza.]
+
 
 === Eliminazione delle Generalizzazioni
 

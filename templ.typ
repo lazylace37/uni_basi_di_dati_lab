@@ -24,7 +24,7 @@
   set heading(numbering: "1.")
 
   show heading.where(level: 1): it => {
-    v(3.8 * font-size, weak: true) + text(it) + v(0.2 * font-size)
+    pagebreak() + text(it) + v(0.2 * font-size)
   }
   show heading.where(level: 2): it => {
     v(0.8 * font-size) + text(it) + v(0.2 * font-size)
