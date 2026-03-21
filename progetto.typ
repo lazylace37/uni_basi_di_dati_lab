@@ -151,7 +151,12 @@ Contesto: industria cinematografica
 
 == Rappresentazione Concettuale dei Dati
 
-TODO: Schema E-R.
+#figure(
+  image("ER-ER.png", format: "png", width: 95%),
+  caption: [
+    Schema Entità-Relazioni
+  ],
+)
 
 Vincoli di integrità:
 - Cicli problematici:
@@ -181,7 +186,10 @@ Il volume è la cardinalià attesa - il numero di istanze
 #table(
   columns: 3,
   table.header[*Concetto*][*Tipo*][*Volume*],
-  [Film], [Entità], [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
+  [Film],
+  [Entità],
+  [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
+
   [Produce], [Relazione], [730000],
 )
 
