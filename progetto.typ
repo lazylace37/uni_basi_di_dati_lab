@@ -359,7 +359,12 @@ debole rispetto a "Film" e "Attore".
 
 === Schema E-R Restrutturato
 
-// TODO: schema
+#figure(
+  image("ER-ER-Ristrutturato.png", format: "png", width: 95%),
+  caption: [
+    Schema Entità-Relazioni Restrutturato
+  ],
+)
 
 Vincoli di integrità:
 - Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
