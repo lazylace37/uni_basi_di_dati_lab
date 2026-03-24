@@ -120,8 +120,7 @@ Contesto: industria cinematografica
   table(
     columns: 1fr,
     table.header[*Operazione 2*],
-    [Ottieni, per ogni categoria di film, il numero medio di attori
-      partecipanti.],
+    [Ottieni le coppie di clienti registrati che hanno visto gli stessi film.],
   ),
   table(
     columns: 1fr,
@@ -400,6 +399,11 @@ $
   "Produce" = (underline("NomeAziendaProduttrice"), underline("TitoloFilm"), underline("AnnoDiProduzioneFilm")) \
   "FK" : { "NomeAziendaProduttrice", "TitoloFilm", "AnnoDiProduzioneFilm" } arrow.r \ { "AziendaProduttrice.Nome", "Film.Titolo", "Film.AnnoDiProduzione" } \
 $
+
+// Operazioni SQL
+
+
+
 
 = Progettazione Fisica
 2 semestre
