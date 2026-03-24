@@ -161,19 +161,20 @@ Contesto: industria cinematografica
 
 === Vincoli di Integrità
 
-- Cicli problematici:
-  - Un attore può pronunciare una frase significativa solo in film in cui ha
-    recitato.
+// - Cicli problematici:
+//   - Un attore può pronunciare una frase significativa solo in film in cui ha
+//     recitato.
 - Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
   venga restituita.
+- La data di inizio del noleggio deve essere antecedente alla data di fine
+  noleggio.
 
 Nota:
 - Il ciclo 'Regista - Dirige - Milm - Recita in - Attore' non è problematico,
   perché un attore può recitare in un film che dirige.
-
-// Note:
-// - entità "Frase Significativa" aggiunta al posto di attributo multivalore nella
-//   relazione "Recita in".
+- La durata massima del noleggio può essere maggiore della differenza tra la
+  data di fine noleggio e la data di inizio noleggio, nel caso in cui la
+  restituzione della copia fisica del film avvenga in ritardo.
 
 = Progettazione Logica
 
@@ -318,16 +319,87 @@ Assumiamo un costo di un accesso in lettura di $1$, e in scrittura di $3$.
 
 === Eliminazione delle Generalizzazioni
 
-3 possibilità:
-1. Accorpamento dei figli nel genitore
-2. Accorpamento del genitore nei figli (solo se totale e disgiunta)
-3. Sostituzione con relazione
+- Generalizzazione Persona: Siccome la generalizzazione è totale e sovrapposta,
+  usiamo il metodo ibrido per la rimozione della generalizzazione, in cui
+  aggiungiamo per ogni figlio una relazione con il genitore. Le entità figli
+  diventano entità deboli.
+  Aggiungiamo un vincolo di integrità per fare in modo che Persona si
+  specializzi obbligatoriamente in almeno uno tra Attore e Resista.
+- Generalizzazione Noleggio: Siccome le generalizzazione è totale e disgiunta,
+  applichiamo la tecnica della rimozione dei figli. Per discriminare tra
+  noleggio corrente e noleggio passato, utilizziamo l'attributo opzionale "Data
+  di fine" come discriminante.
+// Siccome il noleggio corrente è al massimo 1, questo non comporta
+
+// TODO: spiegare perché non le altre
 
 === Traduzione degli Attributi Multivalore
+
+Traduzione degli attributi "Frasi significative" e "Ruoli" della relazione
+"Recita in".
+- "Frasi Significative": aggiungiamo un'entità debole, in relazione $(0,N)$
+  con "Recita in", dato che una stessa frase significativa può essere detta da
+  attori diversi o in film diversi.
+// - "Ruolo": aggiungiamo un'entità (non debole), in relazione $(1,N)$ con "Recita
+//   in". Si è ipotizzato che un ruolo sia indicativo del tipo di personaggio
+//   interpretato (ad es. protagonista, antagonista, comparsa, ...) invece che
+//   legata allo specifico personaggio del film. // (ad es. )
+- "Ruolo": aggiungiamo un'entità debole, in relazione $(1,N)$ con "Recita in".
+// Si è ipotizzato che un ruolo sia indicativo del tipo di personaggio
+// interpretato (ad es. protagonista, antagonista, comparsa, ...) invece che
+// legata allo specifico personaggio del film. // (ad es. )
+
+Traduzione dell'attributo multivalore "Generi": aggiungiamo una entità (non
+debole) in relazione $(1,N)$ con "Film".
+
+=== Eliminazione della Relazione Quaternaria
+
+Siccome la relazione "Recita in", dopo la traduzione degli attributi multivalore,
+risulta quaternaria, è stata reificata in una nuova entità "Recitazione",
+debole rispetto a "Film" e "Attore".
+
+=== Schema E-R Restrutturato
+
+// TODO: schema
+
+Vincoli di integrità:
+- Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
+  venga restituita.
+- Una persona deve essere o un Attore, o un Regista, o entrambi.
+- La data di inizio del noleggio deve essere antecedente alla data di fine
+  noleggio.
+
 === Scelta degli Identificatori Primari
 
+- Per "Cliente Registrato" abbiamo due chiavi candidate: username e email.
+  Si sceglie username.
+
 == Traduzione nello Schema Relazionale
-2 semestre
+
+$
+  "Film" = (underline("Titolo"), underline("AnnoDiProduzione"), "Durata", "Trama", "AziendaProduttrice", \ "NomeRegista", "CognomeRegista", "DataDiNascitaRegista") \
+  "FK" : { "Film.NomeRegista", "Film.CognomeRegista", "Film.DataDiNascitaRegista" } arrow.r\ { "Regista.Nome", "Regista.Cognome", "Regista.DataDiNascita" } \
+  "VNN" : { "Durata", "Trama", "NomeRegista", "CognomeRegista", "DataDiNascitaRegista" } \
+$
+
+$
+  "Genere" = (underline("Nome")) \
+$
+
+$
+  "GenereDelFilm" = (underline("TitoloFilm"), underline("AnnoDiProduzioneFilm"), underline("NomeGenere")) \
+  "FK" : { "TitoloFilm", "AnnoDiProduzioneFilm", "NomeGenere" } arrow.r \ { "Film.Titolo", "Film.AnnoDiProduzione", "Genere.Nome" } \
+$
+
+$
+  "AziendaProduttrice" = (underline("Nome"), "NumeroDiFilmProdotti") \
+  "VNN" : { "NumeroDiFilmProdotti" } \
+$
+
+$
+  "Produce" = (underline("NomeAziendaProduttrice"), underline("TitoloFilm"), underline("AnnoDiProduzioneFilm")) \
+  "FK" : { "NomeAziendaProduttrice", "TitoloFilm", "AnnoDiProduzioneFilm" } arrow.r \ { "AziendaProduttrice.Nome", "Film.Titolo", "Film.AnnoDiProduzione" } \
+$
 
 = Progettazione Fisica
 2 semestre
