@@ -243,7 +243,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="ER" id="U30MzEwewB2mNz0G4Z6D">
-    <mxGraphModel dx="1483" dy="1057" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="500" pageHeight="500" math="0" shadow="0">
+    <mxGraphModel dx="774" dy="655" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="500" pageHeight="500" math="0" shadow="0">
       <root>
         <mxCell id="C-Sq2iyhjldn0pmJ9Tzp-0" />
         <mxCell id="C-Sq2iyhjldn0pmJ9Tzp-1" parent="C-Sq2iyhjldn0pmJ9Tzp-0" />
@@ -492,8 +492,8 @@
         <mxCell id="Ysuaq2zbfPA6wcyDjyiv-11" edge="1" parent="C-Sq2iyhjldn0pmJ9Tzp-1" source="Ysuaq2zbfPA6wcyDjyiv-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" target="C-Sq2iyhjldn0pmJ9Tzp-17">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Ysuaq2zbfPA6wcyDjyiv-9" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;html=1;align=right;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;fillColor=#000000;fontSize=10;" value="Codice" vertex="1">
-          <mxGeometry height="10" width="10" x="55" y="415" as="geometry" />
+        <mxCell id="Ysuaq2zbfPA6wcyDjyiv-9" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;html=1;align=right;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;fillColor=none;fontSize=10;" value="Numero" vertex="1">
+          <mxGeometry height="10" width="10" x="50" y="415" as="geometry" />
         </mxCell>
         <mxCell id="Ysuaq2zbfPA6wcyDjyiv-12" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=#000000;fontSize=10;" value="Nome" vertex="1">
           <mxGeometry height="10" width="10" x="100" as="geometry" />
@@ -506,6 +506,12 @@
         </mxCell>
         <mxCell id="Ysuaq2zbfPA6wcyDjyiv-20" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;fillColor=#000000;fontSize=10;" value="Email" vertex="1">
           <mxGeometry height="10" width="10" x="820" y="415" as="geometry" />
+        </mxCell>
+        <mxCell id="QcyEfsvJSMsca9c4k04q-0" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="shape=partialRectangle;whiteSpace=wrap;html=1;bottom=0;right=0;fillColor=none;fontFamily=Helvetica;fontSize=10;fontColor=default;labelBackgroundColor=default;" value="" vertex="1">
+          <mxGeometry height="40" width="85" x="70" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="QcyEfsvJSMsca9c4k04q-1" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;whiteSpace=wrap;html=1;align=right;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;fillColor=#000000;fontSize=10;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="65" y="430" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -712,12 +718,6 @@
         </mxCell>
         <mxCell id="WOaC-Sb7YozfxcZERt5X-69" parent="1" style="ellipse;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=default;whiteSpace=wrap;fontSize=10;" value="Cognome" vertex="1">
           <mxGeometry height="10" width="10" x="1035" y="96" as="geometry" />
-        </mxCell>
-        <mxCell id="WOaC-Sb7YozfxcZERt5X-70" edge="1" parent="1" source="WOaC-Sb7YozfxcZERt5X-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;fontSize=10;" target="WOaC-Sb7YozfxcZERt5X-16">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="WOaC-Sb7YozfxcZERt5X-71" parent="1" style="ellipse;html=1;align=right;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;fillColor=#000000;fontSize=10;" value="Codice" vertex="1">
-          <mxGeometry height="10" width="10" x="435" y="545" as="geometry" />
         </mxCell>
         <mxCell id="WOaC-Sb7YozfxcZERt5X-74" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;fillColor=#000000;fontSize=10;" value="Username" vertex="1">
           <mxGeometry height="10" width="10" x="1090" y="590" as="geometry" />
@@ -932,6 +932,20 @@
         </mxCell>
         <mxCell id="cfGgywucaznb5wyCpxLC-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=#000000;fontSize=10;" value="Nome" vertex="1">
           <mxGeometry height="10" width="10" x="480" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="3VLtDsKG1zb2chRJl1en-1" edge="1" parent="1" source="3VLtDsKG1zb2chRJl1en-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3VLtDsKG1zb2chRJl1en-2" parent="1" style="ellipse;html=1;align=right;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;fillColor=none;fontSize=10;" value="Numero" vertex="1">
+          <mxGeometry height="10" width="10" x="430" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="3VLtDsKG1zb2chRJl1en-3" parent="1" style="shape=partialRectangle;whiteSpace=wrap;html=1;bottom=0;right=0;fillColor=none;fontFamily=Helvetica;fontSize=10;fontColor=default;labelBackgroundColor=default;" value="" vertex="1">
+          <mxGeometry height="40" width="85" x="450" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="3VLtDsKG1zb2chRJl1en-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=right;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;fillColor=#000000;fontSize=10;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="445" y="560" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
