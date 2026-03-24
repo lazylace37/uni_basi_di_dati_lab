@@ -380,35 +380,104 @@ Vincoli di integrità:
 
 == Traduzione nello Schema Relazionale
 
-$
-  "Film" = (underline("Titolo"), underline("AnnoDiProduzione"), "Durata", "Trama", "AziendaProduttrice", \ "NomeRegista", "CognomeRegista", "DataDiNascitaRegista") \
-  "FK" : { "Film.NomeRegista", "Film.CognomeRegista", "Film.DataDiNascitaRegista" } arrow.r\ { "Regista.Nome", "Regista.Cognome", "Regista.DataDiNascita" } \
-  "VNN" : { "Durata", "Trama", "NomeRegista", "CognomeRegista", "DataDiNascitaRegista" } \
-$
+#let relation(name, attributes, ..constraints) = block(
+  inset: (left: 0.5em),
+  breakable: false,
+)[
+  *#name* (#attributes)
+  #set text(size: 0.9em)
+  #set list(marker: [], indent: 1em)
+  #for c in constraints.pos() [
+    - #c
+  ]
+]
 
-$
-  "Genere" = (underline("Nome")) \
-$
+#let fk = text(fill: blue.darken(30%), weight: "bold")[FK: ]
+#let vnn = text(fill: orange.darken(30%), weight: "bold")[VNN: ]
+#let unique = text(fill: gray.darken(30%), weight: "bold")[UNIQUE: ]
 
-$
-  "GenereDelFilm" = (underline("TitoloFilm"), underline("AnnoDiProduzioneFilm"), underline("NomeGenere")) \
-  "FK" : { "TitoloFilm", "AnnoDiProduzioneFilm", "NomeGenere" } arrow.r \ { "Film.Titolo", "Film.AnnoDiProduzione", "Genere.Nome" } \
-$
+#relation(
+  "AziendaProduttrice",
+  [#underline[Nome], NumeroDiFilmProdotti],
+  [#vnn {NumeroDiFilmProdotti}],
+)
 
-$
-  "AziendaProduttrice" = (underline("Nome"), "NumeroDiFilmProdotti") \
-  "VNN" : { "NumeroDiFilmProdotti" } \
-$
+#relation(
+  "Film",
+  [#underline[Titolo], #underline[AnnoDiProduzione], Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista],
+  [#fk {AziendaProduttrice} $arrow.r$ {AziendaProduttrice.Nome}],
+  [#fk {NomeRegista, CognomeRegista, DataDiNascitaRegista} $arrow.r$ {Regista.Nome, Regista.Cognome, Regista.DataDiNascita}],
+  [#vnn {Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista}],
+)
 
-$
-  "Produce" = (underline("NomeAziendaProduttrice"), underline("TitoloFilm"), underline("AnnoDiProduzioneFilm")) \
-  "FK" : { "NomeAziendaProduttrice", "TitoloFilm", "AnnoDiProduzioneFilm" } arrow.r \ { "AziendaProduttrice.Nome", "Film.Titolo", "Film.AnnoDiProduzione" } \
-$
+#relation(
+  "Genere",
+  [#underline[Nome]],
+)
 
-// Operazioni SQL
+#relation(
+  "GenereDelFilm",
+  [#underline[TitoloFilm], #underline[AnnoDiProduzioneFilm], #underline[NomeGenere]],
+  [#fk {TitoloFilm, AnnoDiProduzioneFilm} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione}],
+  [#fk {NomeGenere} $arrow.r$ {Genere.Nome}],
+)
 
+#relation(
+  "CopiaFisicaDiFilm",
+  [#underline[Numero], #underline[TitoloFilm], #underline[AnnoFilm]],
+  [#fk {TitoloFilm, AnnoFilm} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione}],
+)
 
+#relation(
+  "Noleggio",
+  [#underline[DataDiInizio], #underline[NumeroCopia], #underline[TitoloFilm], #underline[AnnoFilm], EmailCliente, DurataMassimaNoleggio, DataDiFine],
+  [#fk {NumeroCopia, TitoloFilm, AnnoFilm} $arrow.r$ {CopiaFisicaDiFilm.Numero, CopiaFisicaDiFilm.TitoloFilm, CopiaFisicaDiFilm.AnnoFilm}],
+  [#fk {EmailCliente} $arrow.r$ {ClienteRegistrato.Email}],
+  [#vnn {EmailCliente, DurataMassimaNoleggio}],
+)
 
+#relation(
+  "ClienteRegistrato",
+  [#underline[Email], Username, Password],
+  [#unique {Username}],
+  [#vnn {Password}],
+)
+
+#relation(
+  "Persona",
+  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita]],
+)
+
+#relation(
+  "Attore",
+  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita]],
+  [#fk {Nome, Cognome, DataDiNascita} $arrow.r$ {Persona.Nome, Persona.Cognome, Persona.DataDiNascita}],
+)
+
+#relation(
+  "Regista",
+  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita]],
+  [#fk {Nome, Cognome, DataDiNascita} $arrow.r$ {Persona.Nome, Persona.Cognome, Persona.DataDiNascita}],
+)
+
+#relation(
+  "Ruolo",
+  [#underline[NomeRuolo]],
+)
+
+#relation(
+  "FraseSignificativa",
+  [#underline[Frase], #underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore], #underline[NomeRuolo]],
+  [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore, Recitazione.NomeRuolo}],
+)
+
+#relation(
+  "Recitazione",
+  [#underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore], #underline[NomeRuolo]],
+  [#fk {TitoloFilm, AnnoFilm} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione}],
+  [#fk {NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Attore.Nome, Attore.Cognome, Attore.DataDiNascita}],
+  [#fk {NomeRuolo} $arrow.r$ {Ruolo.NomeRuolo}],
+)
 
 = Progettazione Fisica
 2 semestre

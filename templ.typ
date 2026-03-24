@@ -36,7 +36,7 @@
   set par(justify: true, linebreaks: "optimized")
 
   set figure(numbering: "1")
-  set math.equation(numbering: "[1.1]")
+  set math.equation(numbering: none)
 
   align(
     center,
