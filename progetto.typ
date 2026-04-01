@@ -479,6 +479,72 @@ Vincoli di integrità:
   [#fk {NomeRuolo} $arrow.r$ {Ruolo.NomeRuolo}],
 )
 
+= Interrogazioni
+
+== 01
+
+```
+-- Troviamo per ogni film il numero di attori che vi recitano. Notiamo che ogni istanza di recitazione corrisponde ad un ed un solo un attore. Non serve quindi effettuare join con attore
+CREATE VIEW NumeroAttoriPerFilm AS
+SELECT Film.Titolo AS TitoloFilm, Film.AnnoDiProduzione AS AnnoFilm, COUNT(Recitazione.*) AS NumeroAttori
+FROM Film
+    JOIN Recitazione ON Film.Titolo = Recitazione.TitoloFilm AND Film.AnnoDiProduzione = Recitazione.AnnoFilm
+GROUP BY Film.Titolo, Film.AnnoDiProduzione;
+
+-- Utilizziamo la vista precedente per ottenere il numero medio di attori per genere
+SELECT GenereDelFilm.NomeGenere, AVG(NumeroAttori)
+FROM GenereDelFilm
+    JOIN NumeroAttoriPerFilm ON GenereDelFilm.TitoloFilm = NumeroAttoriPerFilm.TitoloFilm AND GenereDelFilm.AnnoFilm = NumeroAttoriPerFilm.AnnoFilm
+GROUP BY GenereDelFilm.NomeGenere;
+```
+
+== 02
+
+```
+-- Troviamo i clienti che hanno visto gli stessi film.
+SELECT NoleggiFilmPerCliente1.EmailCliente, NoleggiFilmPerCliente2.EmailCliente
+FROM NoleggiFilmPerCliente AS NoleggiFilmPerCliente1,
+    NoleggiFilmPerCliente AS NoleggiFilmPerCliente2
+WHERE
+
+-- Select con CONTAINS
+SELECT Cliente1.Email, Cliente2.Email
+FROM ClienteRegistrato Cliente1,
+    ClienteRegistrato Cliente2
+WHERE
+    NOT EXISTS (
+        SELECT *
+        FROM NoleggiFilmPerCliente Noleggi1
+        WHERE
+            Noleggi1.EmailCliente = Cliente1.Email AND
+            NOT EXISTS (
+                SELECT *
+                FROM NoleggiFilmPerCliente Noleggi2
+                WHERE
+                    Noleggi2.EmailCliente = Cliente2.Email AND
+                    Noleggi1.NomeFilm = Noleggi2.NomeFilm AND
+                    Noleggi1.AnnoFilm = Noleggi2.AnnoFilm
+            )
+        )
+    AND
+    NOT EXISTS (
+        SELECT *
+        FROM NoleggiFilmPerCliente Noleggi2
+        WHERE
+            Noleggi2.EmailCliente = Cliente2.Email AND
+            NOT EXISTS (
+                SELECT *
+                FROM NoleggiFilmPerCliente Noleggi1
+                WHERE
+                    Noleggi1.EmailCliente = Cliente1.Email AND
+                    Noleggi2.NomeFilm = Noleggi1.NomeFilm AND
+                    Noleggi2.AnnoFilm = Noleggi1.AnnoFilm
+            )
+        )
+    AND
+        Cliente1.Email < Cliente2.Email;
+```
+
 = Progettazione Fisica
 2 semestre
 
