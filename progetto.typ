@@ -552,6 +552,7 @@ WHERE
 ```
 
 == 03
+
 ```sql
 CREATE VIEW NumeroFilmPerRegista(NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm) AS
 SELECT Regista.Nome, Regista.Cognome, Regista.DataDiNascita, COUNT(*)
@@ -570,13 +571,37 @@ WHERE
 	);
 ```
 
+== 04
+
+```sql
+CREATE VIEW Attore_AziendeProd AS
+  SELECT NomeAttore, CognomeAttore, DataNascitaAttore, AziendaProduttrice
+  FROM   Recitazione JOIN Film
+         ON  Recitazione.TitoloFilm = Film.Titolo
+         AND Recitazione.AnnoFilm = Film.AnnoDiProduzione
+;
+
+SELECT A1.NomeAttore, A1.CognomeAttore, A1.DataNascitaAttore
+FROM   Attore_AziendeProd A1
+WHERE  NOT EXISTS (
+  SELECT *
+  FROM  AziendaProduttrice A2
+  WHERE A1.NomeAttore = A2.NomeAttore
+        AND A1.CognomeAttore = A2.CognomeAttore
+        AND A1.DataNascitaAttore = A2.DataNascitaAttore
+        AND A1.AziendaProduttrice <> A2.AziendaProduttrice
+)
+```
+
 == 05
+
 ```sql
 INSERT INTO Film (Titolo, AnnoDiProduzione, Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista)
 VALUES ('Titolo del film', 2024, 120, 'Trama del film', 'Nome casa produttrice', 'Mario', 'Rossi', '1970-01-01');
 ```
 
 == 06
+
 ```sql
 SELECT Nome, NumeroFilmProdotti
 FROM AziendaProduttrice;
