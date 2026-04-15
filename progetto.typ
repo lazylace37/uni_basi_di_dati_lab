@@ -551,6 +551,37 @@ WHERE
         Cliente1.Email < Cliente2.Email;
 ```
 
+== 03
+```sql
+CREATE VIEW NumeroFilmPerRegista(NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm) AS
+SELECT Regista.Nome, Regista.Cognome, Regista.DataDiNascita, COUNT(*)
+FROM Regista
+	JOIN Film ON Film.NomeRegista = Regista.Nome AND
+		Film.CognomeRegista = Regista.Cognome AND
+		Film.DataDiNascitaRegista = Regista.DataDiNascita
+GROUP BY Regista.Nome, Regista.Cognome, Regista.DataDiNascita;
+
+SELECT NomeRegista, CognomeRegista, DataDiNascitaRegista
+FROM NumeroFilmPerRegista
+WHERE
+	NumeroFilm >= ALL (
+		SELECT NumeroFilm
+		FROM NumeroFilmPerRegista
+	);
+```
+
+== 05
+```sql
+INSERT INTO Film (Titolo, AnnoDiProduzione, Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista)
+VALUES ('Titolo del film', 2024, 120, 'Trama del film', 'Nome casa produttrice', 'Mario', 'Rossi', '1970-01-01');
+```
+
+== 06
+```sql
+SELECT Nome, NumeroFilmProdotti
+FROM AziendaProduttrice;
+```
+
 = Progettazione Fisica
 2 semestre
 
