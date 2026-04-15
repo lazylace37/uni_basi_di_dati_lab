@@ -175,6 +175,12 @@ Nota:
   data di fine noleggio e la data di inizio noleggio, nel caso in cui la
   restituzione della copia fisica del film avvenga in ritardo.
 
+=== Note
+
+Siccome la frase significativa è identificata da una complessa chiave composta
+contenente anche una stringa possibilmente molto lunga, è giustificabile usare
+una chiave surrogata per identificarla, sebbene non sia teoricamente richiesto.
+
 = Progettazione Logica
 
 == Ristrutturazione del Modello E-R
@@ -467,8 +473,8 @@ Vincoli di integrità:
 
 #relation(
   "FraseSignificativa",
-  [#underline[Frase], #underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore], #underline[NomeRuolo]],
-  [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore, Recitazione.NomeRuolo}],
+  [#underline[ID], Frase],
+  // [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore, Recitazione.NomeRuolo}],
 )
 
 #relation(
@@ -483,7 +489,7 @@ Vincoli di integrità:
 
 == 01
 
-```
+```sql
 -- Troviamo per ogni film il numero di attori che vi recitano. Notiamo che ogni istanza di recitazione corrisponde ad un ed un solo un attore. Non serve quindi effettuare join con attore
 CREATE VIEW NumeroAttoriPerFilm AS
 SELECT Film.Titolo AS TitoloFilm, Film.AnnoDiProduzione AS AnnoFilm, COUNT(Recitazione.*) AS NumeroAttori
@@ -500,7 +506,7 @@ GROUP BY GenereDelFilm.NomeGenere;
 
 == 02
 
-```
+```sql
 -- Troviamo i clienti che hanno visto gli stessi film.
 SELECT NoleggiFilmPerCliente1.EmailCliente, NoleggiFilmPerCliente2.EmailCliente
 FROM NoleggiFilmPerCliente AS NoleggiFilmPerCliente1,
