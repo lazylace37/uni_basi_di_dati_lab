@@ -17,7 +17,11 @@ Contesto: industria cinematografica
 #table(
   columns: (auto, auto, auto, auto),
   table.header[*Termine*][*Descrizione*][*Sinonimi*][*Collegamenti*],
-  [Film], [], [], [Attori,\ Azienda Produttice,\ Registi,\ Frasi Significative],
+  [Film],
+  [],
+  [],
+  [Attori,\ Azienda Produttrice,\ Registi,\ Frasi Significative],
+
   [Attore], [], [Autore], [Film],
   [Regista],
   [Dirige almeno un film, e può recitare in uno o più film],
@@ -349,7 +353,7 @@ Traduzione degli attributi "Frasi significative" e "Ruoli" della relazione
 //   in". Si è ipotizzato che un ruolo sia indicativo del tipo di personaggio
 //   interpretato (ad es. protagonista, antagonista, comparsa, ...) invece che
 //   legata allo specifico personaggio del film. // (ad es. )
-- "Ruolo": aggiungiamo un'entità debole, in relazione $(1,N)$ con "Recita in".
+- "Ruolo": aggiungiamo un'entità debole, in relazione $(1,1)$ con "Recita in".
 // Si è ipotizzato che un ruolo sia indicativo del tipo di personaggio
 // interpretato (ad es. protagonista, antagonista, comparsa, ...) invece che
 // legata allo specifico personaggio del film. // (ad es. )
@@ -446,7 +450,7 @@ Vincoli di integrità:
   "ClienteRegistrato",
   [#underline[Email], Username, Password],
   [#unique {Username}],
-  [#vnn {Password}],
+  [#vnn {Password, Username}],
 )
 
 #relation(
@@ -484,6 +488,161 @@ Vincoli di integrità:
   [#fk {NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Attore.Nome, Attore.Cognome, Attore.DataDiNascita}],
   [#fk {NomeRuolo} $arrow.r$ {Ruolo.NomeRuolo}],
 )
+
+== Identificazione dei CHECK
+
+- Noleggio: DataDiFine > DataDiInizio if DataDiFine IS NOT NULL
+- Film: Durata > 0
+
+== Identificazione dei Triggers
+
+- Un'azienda produttrice deve aver prodotto almeno un film.
+  - Inserimento di Azienda Produttrice
+  - Cancellazione di Film
+  - Modifica dell'attributo "AziendaProduttrice" di Film
+- Un genere deve essere associato ad almeno un film
+  - Inserimento Film
+  - Cancellazione Film
+  - Modifica di "Genere" nella relazione "GenereDelFilm"
+  - Cancellazione di "Genere" nella relazione "GenereDelFilm"
+- Un film deve essere associato ad almeno un genere
+  - Cancellazione di Genere
+- Un Film deve essere associato ad almeno una Recitazione
+  - Cancellazione di Recitazione
+  - Inserimento di Film
+- Una Recitazione deve prevedere almeno un Ruolo
+  - Cancellazione di Ruolo
+  - Inserimento di Recitazione
+- Un Attore deve recitare in almeno un Film
+  - Inserimento di Attore
+  - Cancellazione di Recitazione
+- Un Regista deve dirigere almeno un Film
+  - Inserimento Regista
+  - Cancellazione di Film
+  - Modifica di Film
+- Una persona deve essere o un attore, o un regista, o
+  entrambi:
+  - Inserimento di Persona
+  - Cancellazione di Attore
+  - Cancellazione di Regista
+- Ci può essere al massimo un noleggio attivo
+  - Inserimento Noleggio
+  - Modifica Noleggio
+- Attributo derivato "Numero di Film Prodotti"
+  - Inserimento Film
+  - Modifica Film (attributo AziendaProduttrice)
+  - Cancellazione Film
+
+== Creazione dello Schema in SQL
+
+```sql
+CREATE TABLE AziendaProduttrice (
+    Nome VARCHAR(255) PRIMARY KEY,
+    NumeroDiFilmProdotti INT NOT NULL
+);
+
+CREATE TABLE Genere (
+    Nome VARCHAR(100) PRIMARY KEY
+);
+
+CREATE TABLE ClienteRegistrato (
+    Email VARCHAR(255) PRIMARY KEY,
+    Username VARCHAR(100) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Persona (
+    Nome VARCHAR(100),
+    Cognome VARCHAR(100),
+    DataDiNascita DATE,
+    PRIMARY KEY (Nome, Cognome, DataDiNascita)
+);
+
+CREATE TABLE Ruolo (
+    NomeRuolo VARCHAR(100) PRIMARY KEY
+);
+
+CREATE TABLE FraseSignificativa (
+    ID INT PRIMARY KEY,
+    Frase TEXT NOT NULL
+);
+
+CREATE TABLE Attore (
+    Nome VARCHAR(100),
+    Cognome VARCHAR(100),
+    DataDiNascita DATE,
+    PRIMARY KEY (Nome, Cognome, DataDiNascita),
+    FOREIGN KEY (Nome, Cognome, DataDiNascita) REFERENCES Persona(Nome, Cognome, DataDiNascita)
+);
+
+CREATE TABLE Regista (
+    Nome VARCHAR(100),
+    Cognome VARCHAR(100),
+    DataDiNascita DATE,
+    PRIMARY KEY (Nome, Cognome, DataDiNascita),
+    FOREIGN KEY (Nome, Cognome, DataDiNascita) REFERENCES Persona(Nome, Cognome, DataDiNascita)
+);
+
+CREATE TABLE Film (
+    Titolo VARCHAR(255),
+    AnnoDiProduzione INT,
+    Durata INT NOT NULL,
+    Trama TEXT NOT NULL,
+    AziendaProduttrice VARCHAR(255) NOT NULL,
+    NomeRegista VARCHAR(100) NOT NULL,
+    CognomeRegista VARCHAR(100) NOT NULL,
+    DataDiNascitaRegista DATE NOT NULL,
+    PRIMARY KEY (Titolo, AnnoDiProduzione),
+    FOREIGN KEY (AziendaProduttrice) REFERENCES AziendaProduttrice(Nome),
+    FOREIGN KEY (NomeRegista, CognomeRegista, DataDiNascitaRegista)
+        REFERENCES Regista(Nome, Cognome, DataDiNascita)
+);
+
+CREATE TABLE GenereDelFilm (
+    TitoloFilm VARCHAR(255),
+    AnnoDiProduzioneFilm INT,
+    NomeGenere VARCHAR(100),
+    PRIMARY KEY (TitoloFilm, AnnoDiProduzioneFilm, NomeGenere),
+    FOREIGN KEY (TitoloFilm, AnnoDiProduzioneFilm) REFERENCES Film(Titolo, AnnoDiProduzione),
+    FOREIGN KEY (NomeGenere) REFERENCES Genere(Nome)
+);
+
+CREATE TABLE CopiaFisicaDiFilm (
+    Numero INT,
+    TitoloFilm VARCHAR(255),
+    AnnoFilm INT,
+    PRIMARY KEY (Numero, TitoloFilm, AnnoFilm),
+    FOREIGN KEY (TitoloFilm, AnnoFilm) REFERENCES Film(Titolo, AnnoDiProduzione)
+);
+
+CREATE TABLE Recitazione (
+    TitoloFilm VARCHAR(255),
+    AnnoFilm INT,
+    NomeAttore VARCHAR(100),
+    CognomeAttore VARCHAR(100),
+    DataNascitaAttore DATE,
+    NomeRuolo VARCHAR(100),
+    PRIMARY KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo),
+    FOREIGN KEY (TitoloFilm, AnnoFilm) REFERENCES Film(Titolo, AnnoDiProduzione),
+    FOREIGN KEY (NomeAttore, CognomeAttore, DataNascitaAttore)
+        REFERENCES Attore(Nome, Cognome, DataDiNascita),
+    FOREIGN KEY (NomeRuolo) REFERENCES Ruolo(NomeRuolo)
+);
+
+CREATE TABLE Noleggio (
+    DataDiInizio DATE,
+    NumeroCopia INT,
+    TitoloFilm VARCHAR(255),
+    AnnoFilm INT,
+    EmailCliente VARCHAR(255) NOT NULL,
+    DurataMassimaNoleggio INT NOT NULL,
+    DataDiFine DATE,
+    PRIMARY KEY (DataDiInizio, NumeroCopia, TitoloFilm, AnnoFilm),
+    FOREIGN KEY (NumeroCopia, TitoloFilm, AnnoFilm)
+        REFERENCES CopiaFisicaDiFilm(Numero, TitoloFilm, AnnoFilm),
+    FOREIGN KEY (EmailCliente) REFERENCES ClienteRegistrato(Email)
+);
+```
 
 = Interrogazioni
 
