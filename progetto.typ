@@ -472,21 +472,23 @@ Vincoli di integrità:
 
 #relation(
   "Ruolo",
-  [#underline[NomeRuolo]],
+  [#underline[NomeRuolo], #underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore]],
+  [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore}],
 )
 
 #relation(
   "FraseSignificativa",
-  [#underline[ID], Frase],
-  // [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore, Recitazione.NomeRuolo}],
+  [#underline[ID], Frase, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore],
+  [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore}],
+  [#vnn {Frase}],
 )
+
 
 #relation(
   "Recitazione",
-  [#underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore], #underline[NomeRuolo]],
+  [#underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore]],
   [#fk {TitoloFilm, AnnoFilm} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione}],
   [#fk {NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Attore.Nome, Attore.Cognome, Attore.DataDiNascita}],
-  [#fk {NomeRuolo} $arrow.r$ {Ruolo.NomeRuolo}],
 )
 
 == Identificazione dei CHECK
@@ -555,64 +557,74 @@ CREATE TABLE Persona (
     Nome VARCHAR(100),
     Cognome VARCHAR(100),
     DataDiNascita DATE,
+
     PRIMARY KEY (Nome, Cognome, DataDiNascita)
-);
-
-CREATE TABLE Ruolo (
-    NomeRuolo VARCHAR(100) PRIMARY KEY
-);
-
-CREATE TABLE FraseSignificativa (
-    ID INT PRIMARY KEY,
-    Frase TEXT NOT NULL
 );
 
 CREATE TABLE Attore (
     Nome VARCHAR(100),
     Cognome VARCHAR(100),
     DataDiNascita DATE,
+
     PRIMARY KEY (Nome, Cognome, DataDiNascita),
-    FOREIGN KEY (Nome, Cognome, DataDiNascita) REFERENCES Persona(Nome, Cognome, DataDiNascita)
+    FOREIGN KEY (Nome, Cognome, DataDiNascita)
+        REFERENCES Persona(Nome, Cognome, DataDiNascita)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Regista (
     Nome VARCHAR(100),
     Cognome VARCHAR(100),
     DataDiNascita DATE,
+
     PRIMARY KEY (Nome, Cognome, DataDiNascita),
-    FOREIGN KEY (Nome, Cognome, DataDiNascita) REFERENCES Persona(Nome, Cognome, DataDiNascita)
+    FOREIGN KEY (Nome, Cognome, DataDiNascita)
+        REFERENCES Persona(Nome, Cognome, DataDiNascita)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Film (
     Titolo VARCHAR(255),
     AnnoDiProduzione INT,
-    Durata INT NOT NULL,
+    Durata INT NOT NULL CHECK (Durata > 0),
     Trama TEXT NOT NULL,
     AziendaProduttrice VARCHAR(255) NOT NULL,
     NomeRegista VARCHAR(100) NOT NULL,
     CognomeRegista VARCHAR(100) NOT NULL,
     DataDiNascitaRegista DATE NOT NULL,
+
     PRIMARY KEY (Titolo, AnnoDiProduzione),
-    FOREIGN KEY (AziendaProduttrice) REFERENCES AziendaProduttrice(Nome),
+    FOREIGN KEY (AziendaProduttrice)
+        REFERENCES AziendaProduttrice(Nome)
+        ON DELETE CASCADE,
     FOREIGN KEY (NomeRegista, CognomeRegista, DataDiNascitaRegista)
         REFERENCES Regista(Nome, Cognome, DataDiNascita)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE GenereDelFilm (
     TitoloFilm VARCHAR(255),
     AnnoDiProduzioneFilm INT,
     NomeGenere VARCHAR(100),
+
     PRIMARY KEY (TitoloFilm, AnnoDiProduzioneFilm, NomeGenere),
-    FOREIGN KEY (TitoloFilm, AnnoDiProduzioneFilm) REFERENCES Film(Titolo, AnnoDiProduzione),
-    FOREIGN KEY (NomeGenere) REFERENCES Genere(Nome)
+    FOREIGN KEY (TitoloFilm, AnnoDiProduzioneFilm)
+        REFERENCES Film(Titolo, AnnoDiProduzione)
+        ON DELETE CASCADE,
+    FOREIGN KEY (NomeGenere)
+        REFERENCES Genere(Nome)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE CopiaFisicaDiFilm (
     Numero INT,
     TitoloFilm VARCHAR(255),
     AnnoFilm INT,
+
     PRIMARY KEY (Numero, TitoloFilm, AnnoFilm),
-    FOREIGN KEY (TitoloFilm, AnnoFilm) REFERENCES Film(Titolo, AnnoDiProduzione)
+    FOREIGN KEY (TitoloFilm, AnnoFilm)
+        REFERENCES Film(Titolo, AnnoDiProduzione)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Recitazione (
@@ -621,12 +633,43 @@ CREATE TABLE Recitazione (
     NomeAttore VARCHAR(100),
     CognomeAttore VARCHAR(100),
     DataNascitaAttore DATE,
-    NomeRuolo VARCHAR(100),
+
     PRIMARY KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo),
-    FOREIGN KEY (TitoloFilm, AnnoFilm) REFERENCES Film(Titolo, AnnoDiProduzione),
+    FOREIGN KEY (TitoloFilm, AnnoFilm)
+        REFERENCES Film(Titolo, AnnoDiProduzione)
+        ON DELETE CASCADE,
     FOREIGN KEY (NomeAttore, CognomeAttore, DataNascitaAttore)
-        REFERENCES Attore(Nome, Cognome, DataDiNascita),
-    FOREIGN KEY (NomeRuolo) REFERENCES Ruolo(NomeRuolo)
+        REFERENCES Attore(Nome, Cognome, DataDiNascita)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Ruolo (
+    NomeRuolo VARCHAR(100),
+    TitoloFilm VARCHAR(255),
+    AnnoFilm INT,
+    NomeAttore VARCHAR(100),
+    CognomeAttore VARCHAR(100),
+    DataNascitaAttore DATE,
+
+    PRIMARY KEY (NomeRuolo, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore),
+    FOREIGN KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+        REFERENCES Recitazione(TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE FraseSignificativa (
+    ID INT PRIMARY KEY,
+    TitoloFilm VARCHAR(255),
+    AnnoFilm INT,
+    NomeAttore VARCHAR(100),
+    CognomeAttore VARCHAR(100),
+    DataNascitaAttore DATE,
+    Frase TEXT NOT NULL,
+
+    PRIMARY KEY (ID),
+    FOREIGN KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+        REFERENCES Recitazione(TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+        ON DELETE CASCADE,
 );
 
 CREATE TABLE Noleggio (
@@ -636,11 +679,15 @@ CREATE TABLE Noleggio (
     AnnoFilm INT,
     EmailCliente VARCHAR(255) NOT NULL,
     DurataMassimaNoleggio INT NOT NULL,
-    DataDiFine DATE,
+    DataDiFine DATE CHECK (DataDiFine IS NULL OR DataDiFine > DataDiInizio),
+
     PRIMARY KEY (DataDiInizio, NumeroCopia, TitoloFilm, AnnoFilm),
     FOREIGN KEY (NumeroCopia, TitoloFilm, AnnoFilm)
         REFERENCES CopiaFisicaDiFilm(Numero, TitoloFilm, AnnoFilm),
-    FOREIGN KEY (EmailCliente) REFERENCES ClienteRegistrato(Email)
+        ON DELETE CASCADE,
+    FOREIGN KEY (EmailCliente)
+        REFERENCES ClienteRegistrato(Email)
+        ON DELETE CASCADE
 );
 ```
 
@@ -764,6 +811,87 @@ VALUES ('Titolo del film', 2024, 120, 'Trama del film', 'Nome casa produttrice',
 ```sql
 SELECT Nome, NumeroFilmProdotti
 FROM AziendaProduttrice;
+```
+
+= Implementazione di Trigger
+Vengono presentate le implementazioni dei seguenti trigger, scelti per le diverse tipologie di operazioni necessarie per mantenere i vincoli di integrità:
+1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in inserimento su `Persona`.
+2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su `Noleggio`.
+3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su `Film`.
+
+== Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
+```sql
+CREATE FUNCTION ControllaSpecializzazione() RETURNS trigger AS $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT *
+    FROM Attore
+    WHERE Nome = NEW.Nome AND Cognome = NEW.Cognome AND DataDiNascita = NEW.DataDiNascita
+  ) AND NOT EXISTS (
+    SELECT *
+    FROM Regista
+    WHERE Nome = NEW.Nome AND Cognome = NEW.Cognome AND DataDiNascita = NEW.DataDiNascita
+  ) THEN
+    RAISE EXCEPTION 'La persona deve essere o un attore, o un regista, o entrambi';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER Persona_ControllaSpecializzazioneInInserimento
+AFTER INSERT ON Persona
+FOR EACH ROW
+EXECUTE FUNCTION ControllaSpecializzazione();
+```
+
+== Trigger 2: Ci può essere al massimo un noleggio attivo
+```sql
+CREATE FUNCTION ControllaNoleggioAttivo() RETURNS trigger AS $$
+BEGIN
+  IF EXISTS (
+    SELECT *
+    FROM Noleggio
+    WHERE
+      TitoloFilm = NEW.TitoloFilm AND
+      AnnoFilm = NEW.AnnoFilm AND
+      NumeroCopia = NEW.NumeroCopia AND
+      DataDiInizio <> NEW.DataDiInizio AND
+      DataDiFine IS NULL
+  ) THEN
+    RAISE EXCEPTION 'Ci può essere al massimo un noleggio attivo per questa copia fisica di film';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER Noleggio_ControllaNoleggioAttivoInModifica
+AFTER UPDATE ON Noleggio
+DEFERRABLE
+FOR EACH ROW
+EXECUTE FUNCTION ControllaNoleggioAttivo();
+```
+
+== Trigger 3: Attributo derivato "Numero di Film Prodotti"
+```sql
+CREATE FUNCTION AggiornaNumeroFilmProdotti() RETURNS trigger AS $$
+BEGIN
+  UPDATE AziendaProduttrice
+  SET NumeroDiFilmProdotti = (
+    SELECT COUNT(*)
+    FROM Film
+    WHERE AziendaProduttrice = OLD.AziendaProduttrice
+  )
+  WHERE Nome = OLD.AziendaProduttrice;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER Film_AggiornaNumeroFilmProdottiInRimozione
+AFTER DELETE ON Film
+FOR EACH STATEMENT
+EXECUTE FUNCTION AggiornaNumeroFilmProdotti();
 ```
 
 = Progettazione Fisica
