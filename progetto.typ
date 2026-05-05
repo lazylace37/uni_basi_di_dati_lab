@@ -530,10 +530,15 @@ Vincoli di integrità:
 - Ci può essere al massimo un noleggio attivo
   - Inserimento Noleggio
   - Modifica Noleggio
+- Gli intervalli generati dalle date di inizio e di fine noleggio, per ogni copia fisica di un film, non devono sovrapporsi
+  - Inserimento Noleggio
+  - Modifica Noleggio
 - Attributo derivato "Numero di Film Prodotti"
   - Inserimento Film
   - Modifica Film (attributo AziendaProduttrice)
   - Cancellazione Film
+
+Notiamo che, per gli quanto riguardano gli intervalli generati dalle date relative ai noleggi, si ipotizza di lavorare con intervalli chiusi. Segue, quindi, che se un noleggio termina il giorno 10, un nuovo noleggio per la stessa copia fisica di un film può iniziare a partire dal giorno 11.
 
 == Creazione dello Schema in SQL
 
@@ -818,6 +823,7 @@ Vengono presentate le implementazioni dei seguenti trigger, scelti per le divers
 1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in inserimento su `Persona`.
 2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su `Noleggio`.
 3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su `Film`.
+4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su `Noleggio`.
 
 == Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
 ```sql
@@ -893,6 +899,8 @@ AFTER DELETE ON Film
 FOR EACH STATEMENT
 EXECUTE FUNCTION AggiornaNumeroFilmProdotti();
 ```
+
+== Trigger 4: Intervalli di noleggio non sovrapposti
 
 = Progettazione Fisica
 2 semestre
