@@ -187,7 +187,7 @@ una chiave surrogata per identificarla, sebbene non sia teoricamente richiesto.
 
 == Ristrutturazione del Modello E-R
 
-=== Tavola dei Volumi
+=== Tavola dei Volumi <tavola-volumi>
 
 #table(
   columns: 3,
@@ -560,14 +560,93 @@ i vincoli inter-relazionali dei _trigger_.
 Viene riportato il codice di creazione delle relazioni definite in
 @schema-relazionale nel linguaggio Data Definition Language (DDL) di SQL.
 
-#let text = read("create.sql")
-#raw(text, block: true, lang: "sql")
+#let text = read("setup/create.sql")
+#show figure: set block(breakable: true)
+#figure(
+  raw(text, block: true, lang: "sql"),
+  caption: [Creazione dello Schema]
+) <sql-create>
 
 = Implementazione
 
 == Creazione della Base di Dati
+
+Per creare una nuova base di dati, eseguire il seguente comando da shell:
+
+```bash
+psql -c "CREATE DATABASE industria_cinematografica;"
+```
+
 == Creazione delle Tabelle
+
+Per eseguire il codice SQL DDL di @sql-create, eseguire sulla base di dati
+appena creata:
+
+```bash
+psql -d industria_cinematografica -c "\i setup/create.sql"
+```
+
+== Implementazione dei Trigger
+
+Vengono presentate le implementazioni dei seguenti trigger, scelti per le diverse tipologie di operazioni necessarie per mantenere i vincoli di integrità:
+1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in inserimento su `Persona`.
+2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su `Noleggio`.
+3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su `Film`.
+4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su `Noleggio`.
+
+Per il setup dei triggers, eseguire:
+```bash
+psql -d industria_cinematografica -c "\i setup/trigger_1.sql"
+psql -d industria_cinematografica -c "\i setup/trigger_2.sql"
+psql -d industria_cinematografica -c "\i setup/trigger_3.sql"
+psql -d industria_cinematografica -c "\i setup/trigger_4.sql"
+```
+
+=== Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
+
+#let text = read("setup/trigger_1.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
+
+=== Trigger 2: Ci può essere al massimo un noleggio attivo
+
+#let text = read("setup/trigger_2.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
+
+=== Trigger 3: Attributo derivato "Numero di Film Prodotti"
+
+#let text = read("setup/trigger_3.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
+
+=== Trigger 4: Intervalli di noleggio non sovrapposti
+
 == Popolamento della Base di Dati
+
+Per il popolamento della base di dati ci si è affidati ad uno script Python.
+Per la generazione di un dataset realistico, si è utilizzata la libreria
+_faker_, capace di generare dei dati realistici di vari domini, come nomi di
+aziende, di persone, ecc.
+L'uso del linguaggio di programmazione Python insieme a _faker_ ci ha permesso
+di popolare la base di dati con dati piuttosto veritieri e con volumi
+compatibili con quelli supposti in @tavola-volumi.
+
+L'ordine degli inserimenti deve rispettare i vincoli definiti. In particolare,
+sono state evidenziate queste dipendenze cicliche tra relazioni, causate dalla
+partecipazione obbligatoria delle relazioni coinvolte. Il codice di inserimento
+deve quindi posticipare (DEFERRED) il controllo dei vincoli al COMMIT.
+- Persona $<->$ Attore o Regista: una Persona deve essere o un Attore o un
+  Regista o entrambi; un Attore/Regista deve essere una persona
+- Azienda $<->$ Film: un'Azienda deve avere prodotto almeno un Film; un Film
+  deve essere prodotto da un'Azienda.
+- Film $<->$ Genere: un Film deve avere un Genere; un Genere deve essere
+  associato ad un Film
+- Film $<->$ Regista: un Film deve avere un Regista che lo dirige; il Regista
+  deve dirigere un Film
+- Attore $<->$ Recitazione $<->$ Film $<->$ Ruolo: un Attore deve recitare in
+  un Film; la Recitazione si riferisce ad un Film, un Attore e un Ruolo
+
 == Interrogazioni
 
 Le interrogazioni proposte di seguito fanno riferimento alle operazioni
@@ -692,87 +771,3 @@ VALUES ('Titolo del film', 2024, 120, 'Trama del film', 'Nome casa produttrice',
 SELECT Nome, NumeroFilmProdotti
 FROM AziendaProduttrice;
 ```
-== Implementazione dei Trigger
-
-Vengono presentate le implementazioni dei seguenti trigger, scelti per le diverse tipologie di operazioni necessarie per mantenere i vincoli di integrità:
-1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in inserimento su `Persona`.
-2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su `Noleggio`.
-3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su `Film`.
-4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su `Noleggio`.
-
-=== Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
-```sql
-CREATE FUNCTION ControllaSpecializzazione() RETURNS trigger AS $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT *
-    FROM Attore
-    WHERE Nome = NEW.Nome AND Cognome = NEW.Cognome AND DataDiNascita = NEW.DataDiNascita
-  ) AND NOT EXISTS (
-    SELECT *
-    FROM Regista
-    WHERE Nome = NEW.Nome AND Cognome = NEW.Cognome AND DataDiNascita = NEW.DataDiNascita
-  ) THEN
-    RAISE EXCEPTION 'La persona deve essere o un attore, o un regista, o entrambi';
-  END IF;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER Persona_ControllaSpecializzazioneInInserimento
-AFTER INSERT ON Persona
-FOR EACH ROW
-EXECUTE FUNCTION ControllaSpecializzazione();
-```
-
-=== Trigger 2: Ci può essere al massimo un noleggio attivo
-```sql
-CREATE FUNCTION ControllaNoleggioAttivo() RETURNS trigger AS $$
-BEGIN
-  IF EXISTS (
-    SELECT *
-    FROM Noleggio
-    WHERE
-      TitoloFilm = NEW.TitoloFilm AND
-      AnnoFilm = NEW.AnnoFilm AND
-      NumeroCopia = NEW.NumeroCopia AND
-      DataDiInizio <> NEW.DataDiInizio AND
-      DataDiFine IS NULL
-  ) THEN
-    RAISE EXCEPTION 'Ci può essere al massimo un noleggio attivo per questa copia fisica di film';
-  END IF;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER Noleggio_ControllaNoleggioAttivoInModifica
-AFTER UPDATE ON Noleggio
-DEFERRABLE
-FOR EACH ROW
-EXECUTE FUNCTION ControllaNoleggioAttivo();
-```
-
-=== Trigger 3: Attributo derivato "Numero di Film Prodotti"
-```sql
-CREATE FUNCTION AggiornaNumeroFilmProdotti() RETURNS trigger AS $$
-BEGIN
-  UPDATE AziendaProduttrice
-  SET NumeroDiFilmProdotti = (
-    SELECT COUNT(*)
-    FROM Film
-    WHERE AziendaProduttrice = OLD.AziendaProduttrice
-  )
-  WHERE Nome = OLD.AziendaProduttrice;
-  RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER Film_AggiornaNumeroFilmProdottiInRimozione
-AFTER DELETE ON Film
-FOR EACH STATEMENT
-EXECUTE FUNCTION AggiornaNumeroFilmProdotti();
-```
-
-=== Trigger 4: Intervalli di noleggio non sovrapposti
