@@ -6,13 +6,11 @@
   font: "New Computer Modern",
 )
 
-= Progettazione Concettuale
-
-== Analisi dei Requisiti
+= Analisi dei Requisiti
 
 Contesto: industria cinematografica
 
-=== Glossario
+== Glossario
 
 #table(
   columns: (auto, auto, auto, auto),
@@ -36,7 +34,7 @@ Contesto: industria cinematografica
   [Film],
 )
 
-=== Strutturazione dei Requisiti
+== Strutturazione dei Requisiti
 
 #stack(
   dir: ttb,
@@ -110,7 +108,7 @@ Contesto: industria cinematografica
   ),
 )
 
-=== Operazioni
+== Operazioni <operazioni>
 
 #stack(
   dir: ttb,
@@ -153,7 +151,7 @@ Contesto: industria cinematografica
   ),
 )
 
-== Rappresentazione Concettuale dei Dati
+= Progettazione Concettuale
 
 #figure(
   image("ER-ER.png", format: "png", width: 95%),
@@ -162,7 +160,7 @@ Contesto: industria cinematografica
   ],
 )
 
-=== Vincoli di Integrità
+== Vincoli di Integrità
 
 // - Cicli problematici:
 //   - Un attore può pronunciare una frase significativa solo in film in cui ha
@@ -179,7 +177,7 @@ Nota:
   data di fine noleggio e la data di inizio noleggio, nel caso in cui la
   restituzione della copia fisica del film avvenga in ritardo.
 
-=== Note
+== Note
 
 Siccome la frase significativa è identificata da una complessa chiave composta
 contenente anche una stringa possibilmente molto lunga, è giustificabile usare
@@ -189,9 +187,7 @@ una chiave surrogata per identificarla, sebbene non sia teoricamente richiesto.
 
 == Ristrutturazione del Modello E-R
 
-=== Analisi delle Prestazioni
-
-==== Tavola dei Volumi
+=== Tavola dei Volumi
 
 #table(
   columns: 3,
@@ -388,7 +384,7 @@ Vincoli di integrità:
 - Per "Cliente Registrato" abbiamo due chiavi candidate: username e email.
   Si sceglie username.
 
-== Traduzione nello Schema Relazionale
+== Traduzione nello Schema Relazionale <schema-relazionale>
 
 #let relation(name, attributes, ..constraints) = block(
   inset: (left: 0.5em),
@@ -483,7 +479,6 @@ Vincoli di integrità:
   [#vnn {Frase}],
 )
 
-
 #relation(
   "Recitazione",
   [#underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore]],
@@ -491,13 +486,22 @@ Vincoli di integrità:
   [#fk {NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Attore.Nome, Attore.Cognome, Attore.DataDiNascita}],
 )
 
-== Identificazione dei CHECK
+=== Vincoli di Integrità
 
+La traduzione dallo schema concettuale allo schema logico (schema relazionale)
+rende necessaria l'aggiunta dei seguenti vincoli di integrità causati dalla
+perdita di espressibilità del modello relazionale, oltre ai vincoli già
+evidenziati inizialmente.
+
+I vincoli intra-relazionali, escludendo i vincoli di chiave primaria, di
+unicità, e di NOT NULL che sono stati già individuati in @schema-relazionale,
+sono i seguenti:
 - Noleggio: DataDiFine > DataDiInizio if DataDiFine IS NOT NULL
 - Film: Durata > 0
 
-== Identificazione dei Triggers
-
+I vincoli inter-relazionali, escludendo i vincoli di chiave esterna che sono
+stati già individuati in @schema-relazionale, sono i seguenti; per ogni vincolo
+sono riportate le azioni che potrebbero violare l'integrità della base di dati:
 - Un'azienda produttrice deve aver prodotto almeno un film.
   - Inserimento di Azienda Produttrice
   - Cancellazione di Film
@@ -538,16 +542,38 @@ Vincoli di integrità:
   - Modifica Film (attributo AziendaProduttrice)
   - Cancellazione Film
 
-Notiamo che, per gli quanto riguardano gli intervalli generati dalle date relative ai noleggi, si ipotizza di lavorare con intervalli chiusi. Segue, quindi, che se un noleggio termina il giorno 10, un nuovo noleggio per la stessa copia fisica di un film può iniziare a partire dal giorno 11.
+Notiamo che, per gli quanto riguardano gli intervalli generati dalle date
+relative ai noleggi, si ipotizza di lavorare con intervalli chiusi. Segue,
+quindi, che se un noleggio termina il giorno 10, un nuovo noleggio per la
+stessa copia fisica di un film può iniziare a partire dal giorno 11.
 
-== Creazione dello Schema in SQL
+Questi vincoli di integrità devono essere implementati utilizzando dei
+meccanismi esterni, dato che questi non possono essere garantiti nel modello
+relazionale.
+Per i vincoli intra-relazionali verranno usati dei controlli CHECK, mentre per
+i vincoli inter-relazionali dei _trigger_.
+
+= Progettazione Fisica
+
+== Creazione dello Schema in SQL DDL
+
+Viene riportato il codice di creazione delle relazioni definite in
+@schema-relazionale nel linguaggio Data Definition Language (DDL) di SQL.
 
 #let text = read("create.sql")
 #raw(text, block: true, lang: "sql")
 
-= Interrogazioni
+= Implementazione
 
-== 01
+== Creazione della Base di Dati
+== Creazione delle Tabelle
+== Popolamento della Base di Dati
+== Interrogazioni
+
+Le interrogazioni proposte di seguito fanno riferimento alle operazioni
+definite in @operazioni.
+
+=== Interrogazione 1
 
 ```sql
 -- Troviamo per ogni film il numero di attori che vi recitano. Notiamo che ogni istanza di recitazione corrisponde ad un ed un solo un attore. Non serve quindi effettuare join con attore
@@ -564,7 +590,7 @@ FROM GenereDelFilm
 GROUP BY GenereDelFilm.NomeGenere;
 ```
 
-== 02
+=== Interrogazione 2
 
 ```sql
 -- Troviamo i clienti che hanno visto gli stessi film.
@@ -611,7 +637,7 @@ WHERE
         Cliente1.Email < Cliente2.Email;
 ```
 
-== 03
+=== Interrogazione 3
 
 ```sql
 CREATE VIEW NumeroFilmPerRegista(NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm) AS
@@ -631,7 +657,7 @@ WHERE
 	);
 ```
 
-== 04
+=== Interrogazione 4
 
 ```sql
 CREATE VIEW Attore_AziendeProd AS
@@ -653,28 +679,28 @@ WHERE  NOT EXISTS (
 )
 ```
 
-== 05
+=== Interrogazione 5
 
 ```sql
 INSERT INTO Film (Titolo, AnnoDiProduzione, Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista)
 VALUES ('Titolo del film', 2024, 120, 'Trama del film', 'Nome casa produttrice', 'Mario', 'Rossi', '1970-01-01');
 ```
 
-== 06
+=== Interrogazione 6
 
 ```sql
 SELECT Nome, NumeroFilmProdotti
 FROM AziendaProduttrice;
 ```
+== Implementazione dei Trigger
 
-= Implementazione di Trigger
 Vengono presentate le implementazioni dei seguenti trigger, scelti per le diverse tipologie di operazioni necessarie per mantenere i vincoli di integrità:
 1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in inserimento su `Persona`.
 2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su `Noleggio`.
 3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su `Film`.
 4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su `Noleggio`.
 
-== Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
+=== Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
 ```sql
 CREATE FUNCTION ControllaSpecializzazione() RETURNS trigger AS $$
 BEGIN
@@ -700,7 +726,7 @@ FOR EACH ROW
 EXECUTE FUNCTION ControllaSpecializzazione();
 ```
 
-== Trigger 2: Ci può essere al massimo un noleggio attivo
+=== Trigger 2: Ci può essere al massimo un noleggio attivo
 ```sql
 CREATE FUNCTION ControllaNoleggioAttivo() RETURNS trigger AS $$
 BEGIN
@@ -728,7 +754,7 @@ FOR EACH ROW
 EXECUTE FUNCTION ControllaNoleggioAttivo();
 ```
 
-== Trigger 3: Attributo derivato "Numero di Film Prodotti"
+=== Trigger 3: Attributo derivato "Numero di Film Prodotti"
 ```sql
 CREATE FUNCTION AggiornaNumeroFilmProdotti() RETURNS trigger AS $$
 BEGIN
@@ -749,10 +775,4 @@ FOR EACH STATEMENT
 EXECUTE FUNCTION AggiornaNumeroFilmProdotti();
 ```
 
-== Trigger 4: Intervalli di noleggio non sovrapposti
-
-= Progettazione Fisica
-2 semestre
-
-= Implementazione
-2 semestre
+=== Trigger 4: Intervalli di noleggio non sovrapposti
