@@ -17,8 +17,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER Noleggio_ControllaNoleggioAttivoInModifica
+CREATE CONSTRAINT TRIGGER Noleggio_ControllaNoleggioAttivoInModifica
 AFTER UPDATE ON Noleggio
-DEFERRABLE
+DEFERRABLE INITIALLY DEFERRED
 FOR EACH ROW
 EXECUTE FUNCTION ControllaNoleggioAttivo();

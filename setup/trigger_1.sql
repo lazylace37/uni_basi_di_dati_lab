@@ -16,7 +16,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER Persona_ControllaSpecializzazioneInInserimento
+CREATE CONSTRAINT TRIGGER Persona_ControllaSpecializzazioneInInserimento
 AFTER INSERT ON Persona
+DEFERRABLE INITIALLY DEFERRED
 FOR EACH ROW
 EXECUTE FUNCTION ControllaSpecializzazione();
