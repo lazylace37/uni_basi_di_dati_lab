@@ -94,7 +94,7 @@ CREATE TABLE Recitazione (
     CognomeAttore VARCHAR(100),
     DataNascitaAttore DATE,
 
-    PRIMARY KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, NomeRuolo),
+    PRIMARY KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore),
     FOREIGN KEY (TitoloFilm, AnnoFilm)
         REFERENCES Film(Titolo, AnnoDiProduzione)
         ON DELETE CASCADE,
@@ -118,7 +118,7 @@ CREATE TABLE Ruolo (
 );
 
 CREATE TABLE FraseSignificativa (
-    ID INT PRIMARY KEY,
+    ID INT,
     TitoloFilm VARCHAR(255),
     AnnoFilm INT,
     NomeAttore VARCHAR(100),
@@ -129,7 +129,7 @@ CREATE TABLE FraseSignificativa (
     PRIMARY KEY (ID),
     FOREIGN KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
         REFERENCES Recitazione(TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
-        ON DELETE CASCADE,
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Noleggio (
@@ -143,7 +143,7 @@ CREATE TABLE Noleggio (
 
     PRIMARY KEY (DataDiInizio, NumeroCopia, TitoloFilm, AnnoFilm),
     FOREIGN KEY (NumeroCopia, TitoloFilm, AnnoFilm)
-        REFERENCES CopiaFisicaDiFilm(Numero, TitoloFilm, AnnoFilm),
+        REFERENCES CopiaFisicaDiFilm(Numero, TitoloFilm, AnnoFilm)
         ON DELETE CASCADE,
     FOREIGN KEY (EmailCliente)
         REFERENCES ClienteRegistrato(Email)
