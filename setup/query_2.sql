@@ -1,41 +1,28 @@
--- Troviamo i clienti che hanno visto gli stessi film.
-SELECT NoleggiFilmPerCliente1.EmailCliente, NoleggiFilmPerCliente2.EmailCliente
-FROM NoleggiFilmPerCliente AS NoleggiFilmPerCliente1,
-    NoleggiFilmPerCliente AS NoleggiFilmPerCliente2
-WHERE
-
--- Select con CONTAINS
-SELECT Cliente1.Email, Cliente2.Email
-FROM ClienteRegistrato Cliente1, ClienteRegistrato Cliente2
-WHERE
-    NOT EXISTS (
-        SELECT *
-        FROM NoleggiFilmPerCliente Noleggi1
-        WHERE
-            Noleggi1.EmailCliente = Cliente1.Email AND
-            NOT EXISTS (
-                SELECT *
-                FROM NoleggiFilmPerCliente Noleggi2
-                WHERE
-                    Noleggi2.EmailCliente = Cliente2.Email AND
-                    Noleggi1.NomeFilm = Noleggi2.NomeFilm AND
-                    Noleggi1.AnnoFilm = Noleggi2.AnnoFilm
-            )
-        )
-    AND
-    NOT EXISTS (
-        SELECT *
-        FROM NoleggiFilmPerCliente Noleggi2
-        WHERE
-            Noleggi2.EmailCliente = Cliente2.Email AND
-            NOT EXISTS (
-                SELECT *
-                FROM NoleggiFilmPerCliente Noleggi1
-                WHERE
-                    Noleggi1.EmailCliente = Cliente1.Email AND
-                    Noleggi2.NomeFilm = Noleggi1.NomeFilm AND
-                    Noleggi2.AnnoFilm = Noleggi1.AnnoFilm
-            )
-        )
-    AND
-        Cliente1.Email < Cliente2.Email;
+SELECT C1.Email, C2.Email
+FROM   ClienteRegistrato C1, ClienteRegistrato C2
+WHERE  NOT EXISTS ( -- non esiste un Film che ha visto C1 ma non C2
+         SELECT *
+         FROM   Noleggio N1
+         WHERE  N1.EmailCliente = C1.Email AND
+                NOT EXISTS (
+                  SELECT *
+                  FROM   Noleggio N2
+                  WHERE  N2.EmailCliente = C2.Email    AND
+                         N1.TitoloFilm = N2.TitoloFilm AND
+                         N1.AnnoFilm = N2.AnnoFilm
+                )
+       )
+       AND
+       NOT EXISTS ( -- non esiste un Film che ha visto C2 ma non C1
+         SELECT *
+         FROM   Noleggio N1
+         WHERE  N1.EmailCliente = C2.Email AND
+                NOT EXISTS (
+                  SELECT *
+                  FROM   Noleggio N2
+                  WHERE  N2.EmailCliente = C1.Email    AND
+                         N1.TitoloFilm = N2.TitoloFilm AND
+                         N1.AnnoFilm = N2.AnnoFilm
+                )
+       )
+       AND C1.Email < C2.Email;
