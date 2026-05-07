@@ -13,5 +13,5 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER Film_AggiornaNumeroFilmProdottiInRimozione
 AFTER DELETE ON Film
-FOR EACH STATEMENT
+FOR EACH ROW
 EXECUTE FUNCTION AggiornaNumeroFilmProdotti();

@@ -622,6 +622,10 @@ psql -d industria_cinematografica -c "\i setup/trigger_4.sql"
 
 === Trigger 4: Intervalli di noleggio non sovrapposti
 
+#let text = read("setup/trigger_4.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
+
 == Popolamento della Base di Dati
 
 Per il popolamento della base di dati ci si è affidati ad uno script Python.
