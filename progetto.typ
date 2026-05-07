@@ -634,12 +634,13 @@ compatibili con quelli supposti in @tavola-volumi.
 
 L'ordine degli inserimenti deve rispettare i vincoli definiti. In particolare,
 sono state evidenziate queste dipendenze cicliche tra relazioni, causate dalla
-partecipazione obbligatoria delle relazioni coinvolte. Il codice di inserimento
-deve quindi posticipare (DEFERRED) il controllo dei vincoli al COMMIT.
-- Persona $<->$ Attore o Regista: una Persona deve essere o un Attore o un
-  Regista o entrambi; un Attore/Regista deve essere una persona
+partecipazione obbligatoria delle relazioni coinvolte.
+L'inserimento deve dunque avvenire in una transazione con il controllo dei
+vincoli posticipato (DEFERRED) al COMMIT.
+- Persona $<->$ Attore/Regista: una Persona deve essere o un Attore o un
+  Regista o entrambi; un Attore/Regista deve essere una Persona
 - Azienda $<->$ Film: un'Azienda deve avere prodotto almeno un Film; un Film
-  deve essere prodotto da un'Azienda.
+  deve essere prodotto da un'Azienda
 - Film $<->$ Genere: un Film deve avere un Genere; un Genere deve essere
   associato ad un Film
 - Film $<->$ Regista: un Film deve avere un Regista che lo dirige; il Regista

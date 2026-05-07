@@ -16,6 +16,7 @@ fake = Faker()
 
 NUM_FILM = 70
 NUM_CLIENTI = 10
+NUM_PERSONE = 100
 
 GENERI_PREDEFINITI = [
     "Azione", "Commedia", "Drammatico", "Fantascienza", "Horror", 
@@ -33,39 +34,46 @@ def seed_database():
         # Attore, Regista, Persona con controlli DEFERRED
         cur.execute("BEGIN TRANSACTION;")
 
-        film_creati = []
-        copie_create = []
-        clienti_creati = []
-
         ## Generi
         for genere in GENERI_PREDEFINITI:
             cur.execute("INSERT INTO Genere (Nome) VALUES (%s)", (genere,))
 
-        for _ in range(NUM_FILM):
-            ## AziendaProduttrice
-            azienda = fake.unique.company()
+        ## Persona
+        persone = []
+        for _ in range(NUM_PERSONE):
+            nome = fake.first_name()
+            cognome = fake.last_name()
+            nascita = fake.date_of_birth()
+            persone.append((nome, cognome, nascita))
+            cur.execute("INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
+                        (nome, cognome, nascita))
+
+        ## Attori
+        attori_pool = persone[:int(NUM_PERSONE * 0.8)] # 80% attori = 60% solo attori + 20% anche registi
+        for nome, cognome, nascita in attori_pool:
+            cur.execute("INSERT INTO Attore (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
+                        (nome, cognome, nascita))
+        
+        ## Registi
+        registi_pool = persone[int(NUM_PERSONE * 0.6):] # 40% registi = 20% solo registi + 20% anche attori
+        for nome, cognome, nascita in registi_pool:
+            cur.execute("INSERT INTO Regista (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
+                        (nome, cognome, nascita))
+
+        ## AziendaProduttrice
+        aziende = [fake.unique.company() for _ in range(10)]
+        for azienda in aziende:
             cur.execute(
                 "INSERT INTO AziendaProduttrice (Nome, NumeroDiFilmProdotti) VALUES (%s, %s)",
                 (azienda, 0) # Il trigger aggiornerà questo valore
             )
 
-            ## Regista e Persona
-            nome_r = fake.first_name()
-            cognome_r = fake.last_name()
-            nascita_r = fake.date_of_birth()
-            cur.execute("INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
-                        (nome_r, cognome_r, nascita_r))
-            cur.execute("INSERT INTO Regista (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
-                        (nome_r, cognome_r, nascita_r))
+        frase_id = 1
+        film_creati = []
+        for _ in range(NUM_FILM):
+            nome_r, cognome_r, nascita_r = random.choice(registi_pool) # Regista del film
 
-            ## Attore e Persona
-            nome_a = fake.first_name()
-            cognome_a = fake.last_name()
-            nascita_a = fake.date_of_birth()
-            cur.execute("INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
-                        (nome_a, cognome_a, nascita_a))
-            cur.execute("INSERT INTO Attore (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", 
-                        (nome_a, cognome_a, nascita_a))
+            azienda = random.choice(aziende) # AziendaProduttrice del film
 
             ## Film
             titolo = fake.unique.catch_phrase()
@@ -81,29 +89,36 @@ def seed_database():
             film_creati.append((titolo, anno))
 
             ## GenereDelFilm
-            genere = random.choice(GENERI_PREDEFINITI)
-            cur.execute("INSERT INTO GenereDelFilm (TitoloFilm, AnnoDiProduzioneFilm, NomeGenere) VALUES (%s, %s, %s)",
-                        (titolo, anno, genere))
+            generi_film = random.sample(GENERI_PREDEFINITI, k=random.randint(1, 3))
+            for g in generi_film:
+                cur.execute("INSERT INTO GenereDelFilm (TitoloFilm, AnnoDiProduzioneFilm, NomeGenere) VALUES (%s, %s, %s)",
+                            (titolo, anno, g))
 
-            ## Recitazione
-            cur.execute("""
-                INSERT INTO Recitazione (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (titolo, anno, nome_a, cognome_a, nascita_a))
+            ## Attori che recitano in questo film
+            attori_film = random.sample(attori_pool, k=random.randint(1, 15))
+            for nome_a, cognome_a, nascita_a in attori_film:
+                ## Recitazione
+                cur.execute("""
+                    INSERT INTO Recitazione (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (titolo, anno, nome_a, cognome_a, nascita_a))
 
-            ## Ruolo
-            ruolo = fake.job()
-            cur.execute("""
-                INSERT INTO Ruolo (NomeRuolo, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (ruolo, titolo, anno, nome_a, cognome_a, nascita_a))
+                ## Ruolo
+                ruolo = fake.job()
+                cur.execute("""
+                    INSERT INTO Ruolo (NomeRuolo, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (ruolo, titolo, anno, nome_a, cognome_a, nascita_a))
 
-            # ## FraseSignificativa (opzionale)
-            # if random.random() > 0.2:
-            #     cur.execute("""
-            #         INSERT INTO FraseSignificativa (ID, Frase, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
-            #         VALUES (%s, %s, %s, %s, %s, %s, %s)
-            #     """, (fake.unique.random_int(min=1, max=10000), fake.sentence(), titolo, anno, nome_a, cognome_a, nascita_a))
+                ## FraseSignificativa
+                if random.random() < 0.2:
+                    for _ in range(random.randint(1, 2)):
+                        frase = fake.sentence(nb_words=random.randint(5, 15))
+                        cur.execute("""
+                            INSERT INTO FraseSignificativa (ID, Frase, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        """, (frase_id, frase, titolo, anno, nome_a, cognome_a, nascita_a))
+                        frase_id += 1
 
         conn.commit()
 
@@ -112,6 +127,7 @@ def seed_database():
         # CopiaFisicaDiFilm e il relativo ClienteRegistrato.
 
         ## ClienteRegistrato
+        clienti_creati = []
         for _ in range(NUM_CLIENTI):
             email = fake.unique.email()
             username = fake.unique.user_name()
@@ -121,6 +137,7 @@ def seed_database():
             clienti_creati.append(email)
 
         ## CopiaFisicaDiFilm
+        copie_create = []
         for film in film_creati:
             titolo, anno = film
             for numero_copia in range(1, random.randint(1, 3) + 1):
@@ -136,7 +153,7 @@ def seed_database():
             # Generiamo una serie temporale coerente per non sovrapporre le date sulla stessa copia
             data_inizio = fake.date_time_between(start_date="-1y", end_date="-10d")
             
-            for i in range(random.randint(1, 3)):
+            for i in range(random.randint(0, 3)):
                 durata_max = random.randint(3, 14)
                 giorni_effettivi = random.randint(1, durata_max)
                 data_fine = data_inizio + timedelta(days=giorni_effettivi)
