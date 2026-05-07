@@ -8,30 +8,39 @@
 
 = Analisi dei Requisiti
 
-Contesto: industria cinematografica
+Si vuole progettare una base di dati per la gestione di informazioni
+sull'industria cinematografica. La consegna segue dall'esercizio 3 del compito
+di basi di dati del 22 giugno 2009, con alcune aggiunte.
 
 == Glossario
 
-#table(
-  columns: (auto, auto, auto, auto),
-  table.header[*Termine*][*Descrizione*][*Sinonimi*][*Collegamenti*],
-  [Film],
-  [],
-  [],
-  [Attori,\ Azienda Produttrice,\ Registi,\ Frasi Significative],
+È stato prodotto un glossario dei termini che compaiono nel testo, insieme ad
+eventuali sinonimi e collegamenti ad altri termini individuati.
 
-  [Attore], [], [Autore], [Film],
-  [Regista],
-  [Dirige almeno un film, e può recitare in uno o più film],
-  [],
-  [Film],
+#figure(
+  table(
+    align: left,
+    columns: (auto, auto, auto, auto),
+    table.header[*Termine*][*Descrizione*][*Sinonimi*][*Collegamenti*],
+    [Film],
+    [],
+    [],
+    [Attori,\ Azienda Produttrice,\ Registi,\ Frasi Significative],
 
-  [Copia fisica\ di un Film], [], [], [Film,\ Cliente],
-  [Azienda\ Produttrice], [Produce uno o più film], [], [Film],
-  [Cliente],
-  [Noleggia una o più copie fisiche di film],
-  [Cliente Registrato],
-  [Film],
+    [Attore], [Recita in uno o più film], [Autore], [Film],
+    [Regista],
+    [Dirige almeno un film, e può recitare in uno o più film],
+    [],
+    [Film],
+
+    [Copia fisica\ di un Film], [], [], [Film,\ Cliente],
+    [Azienda\ Produttrice], [Produce uno o più film], [], [Film],
+    [Cliente],
+    [Noleggia una o più copie fisiche di film],
+    [Cliente Registrato],
+    [Film],
+  ),
+  caption: [Glossario]
 )
 
 == Strutturazione dei Requisiti
@@ -84,7 +93,7 @@ Contesto: industria cinematografica
       registi con lo stesso nome nati lo stesso giorno).
       Assumiamo che ogni regista diriga almeno un film. Si
       ammetta che un regista possa anche recitare in uno o più
-      film. inclusi flim da lui/lei diretti.],
+      film, inclusi film da lui/lei diretti.],
   ),
   table(
     columns: 1fr,
@@ -110,48 +119,32 @@ Contesto: industria cinematografica
 
 == Operazioni <operazioni>
 
-#stack(
-  dir: ttb,
-  spacing: 1em,
-  table(
-    columns: 1fr,
-    table.header[*Operazione 1*],
-    [Ottieni il numero medio di attori che hanno partecipato in film di uno
-      specifico genere.],
-  ),
-  table(
-    columns: 1fr,
-    table.header[*Operazione 2*],
-    [Ottieni le coppie di clienti registrati che hanno visto gli stessi film.],
-  ),
-  table(
-    columns: 1fr,
-    table.header[*Operazione 3*],
-    [Ottieni il regista che ha diretto il numero massimo di film.],
-  ),
-  table(
-    columns: 1fr,
-    table.header[*Operazione 4*],
-    [Ottieni tutti gli attori che hanno recitato solo a film della stessa casa
-      produttrice.],
-  ),
-  table(
-    columns: (1fr, auto),
-    table.header[*Operazione 5*][*Frequenza*],
-    [Inserimento di nuovo film prodotto da una data casa produttrice.],
-    [57 inserimenti al giorno #footnote[Dal sito web IMDB, risulta che nell'anno 2024
-        sono stati rilasciati 20844 film, ovvero circa 57 film al giorno.]],
-  ),
-  table(
-    columns: (1fr, auto),
-    table.header[*Operazione 6*][*Frequenza*],
-    [Calcola il numero di film prodotti da una data casa produttrice.],
-    [50 richieste al giorno #footnote[Valore ipotetico - media rispetto a tutte
-        le case produttrici.]],
-  ),
-)
+Le Operazioni 1-4 sono state definite per poter prepare delle interrogazioni,
+sviluppate in @interrogazioni, mentre le Operazioni 5 e 6 con le relative
+frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
+@ridondanze.
+
+- _Operazione 1_: Ottieni il numero medio di attori che hanno partecipato in
+  film di uno specifico genere.
+- _Operazione 2_: Ottieni le coppie di clienti registrati che hanno visto gli
+  stessi film.
+- _Operazione 3_: Ottieni il regista che ha diretto il numero massimo di film.
+- _Operazione 4_: Ottieni tutti gli attori che hanno recitato solo a film della
+  stessa casa produttrice.
+- _Operazione 5_: Inserimento di nuovo film prodotto da una data casa
+  produttrice. Frequenza: 57 inserimenti al giorno #footnote[Dal sito web IMDB,
+  risulta che nell'anno 2024 sono stati rilasciati 20844 film, ovvero circa 57
+  film al giorno.]
+- _Operazione 6_: Calcola il numero di film prodotti da una data casa
+  produttrice. Frequenza: 50 richieste al giorno #footnote[Valore ipotetico -
+  media rispetto a tutte le case produttrici.]
 
 = Progettazione Concettuale
+
+Come strategia di progettazione è stata scelta la strategia _inside out_,
+partendo dall'entità Film e man mano allargando lo schema al resto dei concetti
+identificati. Per questo è risultato utile il Glossario, da cui si è dedotto
+come Film fosse l'entità principale da cui tutte le altre dipendessero.
 
 #figure(
   image("ER-ER.png", format: "png", width: 95%),
@@ -160,28 +153,35 @@ Contesto: industria cinematografica
   ],
 )
 
+Alcune note:
+- Per `Copia fisica di Film`, entità debole di `Film`, si è usato il pattern di
+  progettazione _istanza di_. Una copia fisica ha un numero che la identifica
+  tra tutte le copie fisiche di un determinato film.
+- Per `Azienda Produttrice` viene mantenuto il numero di film da essa prodotti
+  come un attributo derivato (derivato dalla relazione Produce).
+- Per i noleggi si è usato il pattern per la storicizzazione, quindi
+  specializzando il Noleggio in `Noleggio Corrente` e `Noleggio Passato`;
+  quest'ultimo ha l'attributo `Data di Fine`.
+  // Il noleggio è relativo ad una specifica copia fisica di film, dunque si è
+  // supposto che l'attributo `Data di Inizio` fosse sufficiente ad identificare 
+- Per `Cliente Registrato` sono presenti più chiavi candidate.
+
 == Vincoli di Integrità
 
-// - Cicli problematici:
-//   - Un attore può pronunciare una frase significativa solo in film in cui ha
-//     recitato.
-- Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
+I seguenti vincoli di integrità devono essere aggiunti al precedente schema per
+garantire il significato atteso della base di dati.
+
+- Una Copia fisica di un Film noleggiata non può essere rinoleggiata prima che
   venga restituita.
-- La data di inizio del noleggio deve essere antecedente alla data di fine
-  noleggio.
+- La Data di Inizio del Noleggio deve essere antecedente alla Data di Fine
+  Noleggio.
 
 Nota:
-- Il ciclo 'Regista - Dirige - Milm - Recita in - Attore' non è problematico,
-  perché un attore può recitare in un film che dirige.
+- Il ciclo 'Regista - Dirige - Film - Recita in - Attore' non è problematico,
+  perché un Attore può Recitare in un Film che dirige.
 - La durata massima del noleggio può essere maggiore della differenza tra la
   data di fine noleggio e la data di inizio noleggio, nel caso in cui la
   restituzione della copia fisica del film avvenga in ritardo.
-
-== Note
-
-Siccome la frase significativa è identificata da una complessa chiave composta
-contenente anche una stringa possibilmente molto lunga, è giustificabile usare
-una chiave surrogata per identificarla, sebbene non sia teoricamente richiesto.
 
 = Progettazione Logica
 
@@ -214,7 +214,7 @@ una chiave surrogata per identificarla, sebbene non sia teoricamente richiesto.
   ),
 )*/
 
-=== Analisi delle Ridondanze
+=== Analisi delle Ridondanze <ridondanze>
 
 // Trovare le ridondanze:
 // - attributi derivabili:
@@ -363,12 +363,12 @@ Siccome la relazione "Recita in", dopo la traduzione degli attributi multivalore
 risulta quaternaria, è stata reificata in una nuova entità "Recitazione",
 debole rispetto a "Film" e "Attore".
 
-=== Schema E-R Restrutturato
+=== Schema E-R Ristrutturato
 
 #figure(
   image("ER-ER-Ristrutturato.png", format: "png", width: 95%),
   caption: [
-    Schema Entità-Relazioni Restrutturato
+    Schema Entità-Relazioni Ristrutturato
   ],
 )
 
@@ -378,6 +378,12 @@ Vincoli di integrità:
 - Una persona deve essere o un Attore, o un Regista, o entrambi.
 - La data di inizio del noleggio deve essere antecedente alla data di fine
   noleggio.
+
+Nota:
+- Siccome `Frase Significativa` è identificata da una complessa chiave composta
+  contenente anche una stringa possibilmente molto lunga, è giustificabile
+  usare una chiave surrogata per identificarla, sebbene non sia teoricamente
+  richiesto.
 
 === Scelta degli Identificatori Primari
 
@@ -490,7 +496,7 @@ Vincoli di integrità:
 
 La traduzione dallo schema concettuale allo schema logico (schema relazionale)
 rende necessaria l'aggiunta dei seguenti vincoli di integrità causati dalla
-perdita di espressibilità del modello relazionale, oltre ai vincoli già
+perdita di espressività del modello relazionale, oltre ai vincoli già
 evidenziati inizialmente.
 
 I vincoli intra-relazionali, escludendo i vincoli di chiave primaria, di
@@ -652,7 +658,7 @@ vincoli posticipato (DEFERRED) al COMMIT.
 - Attore $<->$ Recitazione $<->$ Film $<->$ Ruolo: un Attore deve recitare in
   un Film; la Recitazione si riferisce ad un Film, un Attore e un Ruolo
 
-== Interrogazioni
+== Interrogazioni <interrogazioni>
 
 Le interrogazioni proposte di seguito fanno riferimento alle operazioni
 definite in @operazioni.

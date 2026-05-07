@@ -38,6 +38,7 @@
   set figure(numbering: "1")
   set math.equation(numbering: none)
 
+  set page(numbering: none)
   align(
     center,
     text(18pt, weight: "bold", title),
@@ -60,11 +61,12 @@
   //     ),
   // )
 
-  // pagebreak()
+  set page(numbering: "i")
 
-  // outline()
+  counter(page).update(1)
+  outline()
 
-  // pagebreak()
-
+  counter(page).update(1)
+  set page(numbering: "1")
   body
 }
