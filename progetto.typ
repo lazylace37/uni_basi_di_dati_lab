@@ -659,120 +659,36 @@ definite in @operazioni.
 
 === Interrogazione 1
 
-```sql
--- Troviamo per ogni film il numero di attori che vi recitano. Notiamo che ogni istanza di recitazione corrisponde ad un ed un solo un attore. Non serve quindi effettuare join con attore
-CREATE VIEW NumeroAttoriPerFilm AS
-SELECT Film.Titolo AS TitoloFilm, Film.AnnoDiProduzione AS AnnoFilm, COUNT(Recitazione.*) AS NumeroAttori
-FROM Film
-    JOIN Recitazione ON Film.Titolo = Recitazione.TitoloFilm AND Film.AnnoDiProduzione = Recitazione.AnnoFilm
-GROUP BY Film.Titolo, Film.AnnoDiProduzione;
-
--- Utilizziamo la vista precedente per ottenere il numero medio di attori per genere
-SELECT GenereDelFilm.NomeGenere, AVG(NumeroAttori)
-FROM GenereDelFilm
-    JOIN NumeroAttoriPerFilm ON GenereDelFilm.TitoloFilm = NumeroAttoriPerFilm.TitoloFilm AND GenereDelFilm.AnnoFilm = NumeroAttoriPerFilm.AnnoFilm
-GROUP BY GenereDelFilm.NomeGenere;
-```
+#let text = read("setup/query_1.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
 === Interrogazione 2
 
-```sql
--- Troviamo i clienti che hanno visto gli stessi film.
-SELECT NoleggiFilmPerCliente1.EmailCliente, NoleggiFilmPerCliente2.EmailCliente
-FROM NoleggiFilmPerCliente AS NoleggiFilmPerCliente1,
-    NoleggiFilmPerCliente AS NoleggiFilmPerCliente2
-WHERE
-
--- Select con CONTAINS
-SELECT Cliente1.Email, Cliente2.Email
-FROM ClienteRegistrato Cliente1,
-    ClienteRegistrato Cliente2
-WHERE
-    NOT EXISTS (
-        SELECT *
-        FROM NoleggiFilmPerCliente Noleggi1
-        WHERE
-            Noleggi1.EmailCliente = Cliente1.Email AND
-            NOT EXISTS (
-                SELECT *
-                FROM NoleggiFilmPerCliente Noleggi2
-                WHERE
-                    Noleggi2.EmailCliente = Cliente2.Email AND
-                    Noleggi1.NomeFilm = Noleggi2.NomeFilm AND
-                    Noleggi1.AnnoFilm = Noleggi2.AnnoFilm
-            )
-        )
-    AND
-    NOT EXISTS (
-        SELECT *
-        FROM NoleggiFilmPerCliente Noleggi2
-        WHERE
-            Noleggi2.EmailCliente = Cliente2.Email AND
-            NOT EXISTS (
-                SELECT *
-                FROM NoleggiFilmPerCliente Noleggi1
-                WHERE
-                    Noleggi1.EmailCliente = Cliente1.Email AND
-                    Noleggi2.NomeFilm = Noleggi1.NomeFilm AND
-                    Noleggi2.AnnoFilm = Noleggi1.AnnoFilm
-            )
-        )
-    AND
-        Cliente1.Email < Cliente2.Email;
-```
+#let text = read("setup/query_2.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
 === Interrogazione 3
 
-```sql
-CREATE VIEW NumeroFilmPerRegista(NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm) AS
-SELECT Regista.Nome, Regista.Cognome, Regista.DataDiNascita, COUNT(*)
-FROM Regista
-	JOIN Film ON Film.NomeRegista = Regista.Nome AND
-		Film.CognomeRegista = Regista.Cognome AND
-		Film.DataDiNascitaRegista = Regista.DataDiNascita
-GROUP BY Regista.Nome, Regista.Cognome, Regista.DataDiNascita;
-
-SELECT NomeRegista, CognomeRegista, DataDiNascitaRegista
-FROM NumeroFilmPerRegista
-WHERE
-	NumeroFilm >= ALL (
-		SELECT NumeroFilm
-		FROM NumeroFilmPerRegista
-	);
-```
+#let text = read("setup/query_3.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
 === Interrogazione 4
 
-```sql
-CREATE VIEW Attore_AziendeProd AS
-  SELECT NomeAttore, CognomeAttore, DataNascitaAttore, AziendaProduttrice
-  FROM   Recitazione JOIN Film
-         ON  Recitazione.TitoloFilm = Film.Titolo
-         AND Recitazione.AnnoFilm = Film.AnnoDiProduzione
-;
-
-SELECT A1.NomeAttore, A1.CognomeAttore, A1.DataNascitaAttore
-FROM   Attore_AziendeProd A1
-WHERE  NOT EXISTS (
-  SELECT *
-  FROM  AziendaProduttrice A2
-  WHERE A1.NomeAttore = A2.NomeAttore
-        AND A1.CognomeAttore = A2.CognomeAttore
-        AND A1.DataNascitaAttore = A2.DataNascitaAttore
-        AND A1.AziendaProduttrice <> A2.AziendaProduttrice
-)
-```
+#let text = read("setup/query_4.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
 === Interrogazione 5
 
-```sql
-INSERT INTO Film (Titolo, AnnoDiProduzione, Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista)
-VALUES ('Titolo del film', 2024, 120, 'Trama del film', 'Nome casa produttrice', 'Mario', 'Rossi', '1970-01-01');
-```
+#let text = read("setup/query_5.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
 === Interrogazione 6
 
-```sql
-SELECT Nome, NumeroFilmProdotti
-FROM AziendaProduttrice;
-```
+#let text = read("setup/query_6.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
