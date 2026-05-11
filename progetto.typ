@@ -62,58 +62,68 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
     [
       - Ogni film sia identificato univocamente dal suo titolo e dall'anno di
         produzione (assumiamo che in uno stesso anno non possano venir prodotti
-        due o più film con lo stesso titolo, ma ammettiamo che film con lo
-        stesso titolo possano essere prodotti in anni diversi, come accade nel
-        caso dei remake).
+        due o più film con lo stesso titolo, ma ammettiamo che film con lo stesso
+        titolo possano essere prodotti in anni diversi, come accade nel caso dei
+        remake).
       - Ogni film abbia una durata espressa in minuti, un’unica azienda
         produttrice e sia classificato come appartenente ad uno o più generi
         (commedia, thriller, film dell'orrore, fantasy, ..)
       - Ogni film abbia uno o più registi e zero, uno o più autori che vi
-        recitano. Ogni film sia caratterizzato da una breve descrizione della
-        trama. Infine, ogni film abbia zero o più frasi significative, ciascuna
-        pronunciata da uno degli attori che recitano nel film (assumiamo che
-        alcuni attori possano pronunciare più frasi significative, altri una
-        sola frase significativa, altri ancora nessuna).
+        recitano.
+      - Ogni film sia caratterizzato da una breve descrizione della trama.
+      - Ogni film abbia zero o più frasi significative, ciascuna pronunciata da
+        uno degli attori che recitano nel film (assumiamo che alcuni attori
+        possano pronunciare più frasi significative, altri una sola frase
+        significativa, altri ancora nessuna).
     ],
   ),
   table(
     columns: 1fr,
     table.header(table.cell(align: center)[*Frasi relative a attori*]),
-    [Gli attori siano identificati univocamente dal nome e
-      dalla data di nascita (assumiamo che non vi siano attori
-      con lo stesso nome nati lo stesso giorno). Assumiamo che
-      ogni attore compaia in almeno un film. Ogni attore
-      svolga uno o più ruoli in ogni film nel quale recita. ],
+    [
+      - Gli attori siano identificati univocamente dal nome e dalla data di
+        nascita (assumiamo che non vi siano attori con lo stesso nome nati lo
+        stesso giorno).
+      - Ogni attore compaia in almeno un film.
+      - Ogni attore svolga uno o più ruoli in ogni film nel quale recita.
+    ],
   ),
   table(
     columns: 1fr,
     table.header(table.cell(align: center)[*Frasi relative a registi*]),
-    [I registi siano identificati univocamente dal nome e
-      dalla data di nascita (assumiamo che non vi siano
-      registi con lo stesso nome nati lo stesso giorno).
-      Assumiamo che ogni regista diriga almeno un film. Si
-      ammetta che un regista possa anche recitare in uno o più
-      film, inclusi film da lui/lei diretti.],
+    [
+      - I registi siano identificati univocamente dal nome e dalla data di
+        nascita (assumiamo che non vi siano registi con lo stesso nome nati lo
+        stesso giorno).
+      - Ogni regista diriga almeno un film.
+      - Un regista possa anche recitare in uno o più film, inclusi film da
+        lui/lei diretti.
+    ],
   ),
   table(
     columns: 1fr,
     table.header(table.cell(
       align: center,
     )[*Frasi relative a aziende produttrici*]),
-    [Le aziende produttrici siano identificate dal loro nome
-      e abbiano un unico recapito. Ogni azienda produttrice
-      produca uno o più film.],
+    [
+      - Le aziende produttrici siano identificate dal loro nome e abbiano un
+        unico recapito.
+      - Ogni azienda produttrice produca uno o più film.
+    ],
   ),
   table(
     columns: 1fr,
     table.header(table.cell(
       align: center,
     )[*Frasi relative a videonoleggio (aggiunta alla consegna)*]),
-    [Si vuole gestire il videonoleggio di film da parte dei clienti registrati.
-      Un cliente può noleggiare una o più copie fisiche di un film per un certo
-      periodo di tempo limitato. Se una copia fisica risulta prestata, non può
-      essere rinoleggiata prima che essa venga restituita. Si vuole ricordare lo
-      storico dei prestiti dei film da parte dei clienti.],
+    [
+      Si vuole gestire il videonoleggio di film da parte dei clienti registrati.
+      - Un cliente può noleggiare una o più copie fisiche di un film per un
+        certo periodo di tempo limitato. Se una copia fisica risulta prestata,
+        non può essere rinoleggiata prima che essa venga restituita.
+      - Si vuole ricordare lo storico dei prestiti dei film da parte dei
+        clienti.
+    ],
   ),
 )
 
@@ -165,6 +175,7 @@ Alcune note:
   // Il noleggio è relativo ad una specifica copia fisica di film, dunque si è
   // supposto che l'attributo `Data di Inizio` fosse sufficiente ad identificare 
 - Per `Cliente Registrato` sono presenti più chiavi candidate.
+- Per `Azienda Produttrice` sono presenti più chiavi candidate.
 
 == Vincoli di Integrità
 
@@ -410,16 +421,16 @@ Nota:
 
 #relation(
   "AziendaProduttrice",
-  [#underline[Nome], NumeroDiFilmProdotti],
-  [#vnn {NumeroDiFilmProdotti}],
+  [#underline[Nome], Recapito, NumeroDiFilmProdotti],
+  [#vnn {Recapito, NumeroDiFilmProdotti}],
+  [#unique {Recapito}],
 )
 
 #relation(
   "Film",
-  [#underline[Titolo], #underline[AnnoDiProduzione], Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista],
+  [#underline[Titolo], #underline[AnnoDiProduzione], Durata, Trama, AziendaProduttrice],
   [#fk {AziendaProduttrice} $arrow.r$ {AziendaProduttrice.Nome}],
-  [#fk {NomeRegista, CognomeRegista, DataDiNascitaRegista} $arrow.r$ {Regista.Nome, Regista.Cognome, Regista.DataDiNascita}],
-  [#vnn {Durata, Trama, AziendaProduttrice, NomeRegista, CognomeRegista, DataDiNascitaRegista}],
+  [#vnn {Durata, Trama, AziendaProduttrice}],
 )
 
 #relation(
@@ -473,6 +484,12 @@ Nota:
 )
 
 #relation(
+  "RegistaDelFilm",
+  [#underline[TitoloFilm], #underline[AnnoDiProduzioneFilm], #underline[NomeRegista], #underline[CognomeRegista], #underline[AnnoDiNascitaRegista]],
+  [#fk {TitoloFilm, AnnoDiProduzioneFilm, NomeRegista, CognomeRegista, AnnoDiNascitaRegista} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione, Regista.Nome, Regista.Cognome, Regista.AnnoDiNascita}],
+)
+
+#relation(
   "Ruolo",
   [#underline[NomeRuolo], #underline[TitoloFilm], #underline[AnnoFilm], #underline[NomeAttore], #underline[CognomeAttore], #underline[DataNascitaAttore]],
   [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore}],
@@ -519,9 +536,11 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
   - Cancellazione di "Genere" nella relazione "GenereDelFilm"
 - Un film deve essere associato ad almeno un genere
   - Cancellazione di Genere
-- Un Film deve essere associato ad almeno una Recitazione
-  - Cancellazione di Recitazione
+- Un Film deve avere almeno un Regista
   - Inserimento di Film
+  - Cancellazione di Regista
+  - Modifica di "RegistaDelFilm"
+  - Cancellazione di "RegistaDelFilm"
 - Una Recitazione deve prevedere almeno un Ruolo
   - Cancellazione di Ruolo
   - Inserimento di Recitazione
@@ -531,7 +550,8 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
 - Un Regista deve dirigere almeno un Film
   - Inserimento Regista
   - Cancellazione di Film
-  - Modifica di Film
+  - Modifica di "RegistaDelFilm"
+  - Cancellazione di "RegistaDelFilm"
 - Una persona deve essere o un attore, o un regista, o
   entrambi:
   - Inserimento di Persona
@@ -556,8 +576,9 @@ stessa copia fisica di un film può iniziare a partire dal giorno 11.
 Questi vincoli di integrità devono essere implementati utilizzando dei
 meccanismi esterni, dato che questi non possono essere garantiti nel modello
 relazionale.
-Per i vincoli intra-relazionali verranno usati dei controlli CHECK, mentre per
-i vincoli inter-relazionali dei _trigger_.
+Per i vincoli intra-relazionali verranno usati dei controlli `CHECK`, mentre
+per i vincoli inter-relazionali dei _trigger_ o le clausole `ON DELETE` e
+`ON UPDATE` dei vincoli di chiave esterna.
 
 = Progettazione Fisica
 
@@ -655,8 +676,9 @@ vincoli posticipato (DEFERRED) al COMMIT.
   associato ad un Film
 - Film $<->$ Regista: un Film deve avere un Regista che lo dirige; il Regista
   deve dirigere un Film
-- Attore $<->$ Recitazione $<->$ Film $<->$ Ruolo: un Attore deve recitare in
-  un Film; la Recitazione si riferisce ad un Film, un Attore e un Ruolo
+- Attore $<->$ Recitazione $<->$ Ruolo: un Attore deve partecipare ad almeno
+  una Recitazione; la Recitazione si riferisce a un Attore e richiede almeno un
+  Ruolo.
 
 == Interrogazioni <interrogazioni>
 
