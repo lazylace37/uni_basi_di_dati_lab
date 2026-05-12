@@ -14,11 +14,3 @@ WHERE  NOT EXISTS (
     AND  A1.DataNascitaAttore  =  A2.DataNascitaAttore
     AND  A1.AziendaProduttrice <> A2.AziendaProduttrice
 )
-
--- Alternativa
--- SELECT   *
--- FROM     Recitazione JOIN Film
---   ON     Recitazione.TitoloFilm = Film.Titolo
---  AND     Recitazione.AnnoFilm   = Film.AnnoDiProduzione
--- GROUP BY NomeAttore, CognomeAttore, DataNascitaAttore
--- HAVING   COUNT(DISTINCT AziendaProduttrice) = 1;

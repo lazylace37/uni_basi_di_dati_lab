@@ -40,7 +40,7 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
     [Cliente Registrato],
     [Film],
   ),
-  caption: [Glossario]
+  caption: [Glossario],
 )
 
 == Strutturazione dei Requisiti
@@ -143,11 +143,11 @@ frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
   stessa casa produttrice.
 - _Operazione 5_: Inserimento di nuovo film prodotto da una data casa
   produttrice. Frequenza: 57 inserimenti al giorno #footnote[Dal sito web IMDB,
-  risulta che nell'anno 2024 sono stati rilasciati 20844 film, ovvero circa 57
-  film al giorno.]
+    risulta che nell'anno 2024 sono stati rilasciati 20844 film, ovvero circa 57
+    film al giorno.]
 - _Operazione 6_: Calcola il numero di film prodotti da una data casa
   produttrice. Frequenza: 50 richieste al giorno #footnote[Valore ipotetico -
-  media rispetto a tutte le case produttrici.]
+    media rispetto a tutte le case produttrici.]
 
 = Progettazione Concettuale
 
@@ -172,8 +172,8 @@ Alcune note:
 - Per i noleggi si è usato il pattern per la storicizzazione, quindi
   specializzando il Noleggio in `Noleggio Corrente` e `Noleggio Passato`;
   quest'ultimo ha l'attributo `Data di Fine`.
-  // Il noleggio è relativo ad una specifica copia fisica di film, dunque si è
-  // supposto che l'attributo `Data di Inizio` fosse sufficiente ad identificare 
+// Il noleggio è relativo ad una specifica copia fisica di film, dunque si è
+// supposto che l'attributo `Data di Inizio` fosse sufficiente ad identificare
 - Per `Cliente Registrato` sono presenti più chiavi candidate.
 - Per `Azienda Produttrice` sono presenti più chiavi candidate.
 
@@ -400,6 +400,8 @@ Nota:
 
 - Per "Cliente Registrato" abbiamo due chiavi candidate: username e email.
   Si sceglie username.
+- Per "Azienda Produttrice" abbiamo due chiavi candidate: nome e recapito.
+  Si sceglie nome.
 
 == Traduzione nello Schema Relazionale <schema-relazionale>
 
@@ -591,7 +593,7 @@ Viene riportato il codice di creazione delle relazioni definite in
 #show figure: set block(breakable: true)
 #figure(
   raw(text, block: true, lang: "sql"),
-  caption: [Creazione dello Schema]
+  caption: [Creazione dello Schema],
 ) <sql-create>
 
 = Implementazione
