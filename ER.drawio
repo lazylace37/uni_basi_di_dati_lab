@@ -243,7 +243,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="ER" id="U30MzEwewB2mNz0G4Z6D">
-    <mxGraphModel dx="1190" dy="894" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="500" pageHeight="500" math="0" shadow="0">
+    <mxGraphModel dx="878" dy="737" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="500" pageHeight="500" math="0" shadow="0">
       <root>
         <mxCell id="C-Sq2iyhjldn0pmJ9Tzp-0" />
         <mxCell id="C-Sq2iyhjldn0pmJ9Tzp-1" parent="C-Sq2iyhjldn0pmJ9Tzp-0" />
@@ -266,6 +266,9 @@
               <mxPoint x="690" y="150" />
             </Array>
           </mxGeometry>
+        </mxCell>
+        <mxCell id="5Y4G3-foBvBUPo1vHciP-1" edge="1" parent="C-Sq2iyhjldn0pmJ9Tzp-1" source="C-Sq2iyhjldn0pmJ9Tzp-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" target="5Y4G3-foBvBUPo1vHciP-0">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="C-Sq2iyhjldn0pmJ9Tzp-8" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="whiteSpace=wrap;html=1;align=center;fontSize=10;" value="Attore" vertex="1">
           <mxGeometry height="40" width="100" x="520" y="170" as="geometry" />
@@ -519,11 +522,14 @@
         <mxCell id="96PKGr4KHB-MwZ2hB7P8-0" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=#000000;fontSize=10;" value="Recapito" vertex="1">
           <mxGeometry height="10" width="10" x="150" as="geometry" />
         </mxCell>
+        <mxCell id="5Y4G3-foBvBUPo1vHciP-0" parent="C-Sq2iyhjldn0pmJ9Tzp-1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=default;dashed=1;fontSize=10;" value="Numero di Film Recitati" vertex="1">
+          <mxGeometry height="10" width="10" x="530" y="140" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="aQqGkPSzWSoWEIOc6DDW" name="ER-Ristrutturato">
-    <mxGraphModel dx="1178" dy="673" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="663" dy="416" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -543,6 +549,9 @@
           <mxGeometry height="40" width="100" x="460" y="300" as="geometry" />
         </mxCell>
         <mxCell id="WOaC-Sb7YozfxcZERt5X-135" edge="1" parent="1" source="WOaC-Sb7YozfxcZERt5X-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;fontSize=10;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" target="WOaC-Sb7YozfxcZERt5X-133" value="(1,1)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PJsmakofX23_Klvl3wRG-2" edge="1" parent="1" source="WOaC-Sb7YozfxcZERt5X-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" target="PJsmakofX23_Klvl3wRG-1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="WOaC-Sb7YozfxcZERt5X-6" parent="1" style="whiteSpace=wrap;html=1;align=center;fontSize=10;" value="Attore" vertex="1">
@@ -957,6 +966,9 @@
         </mxCell>
         <mxCell id="qQQ0gec1jMdWMAJ7W6l2-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=#000000;fontSize=10;" value="Recapito" vertex="1">
           <mxGeometry height="10" width="10" x="530" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="PJsmakofX23_Klvl3wRG-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;fillColor=default;dashed=1;fontSize=10;" value="Numero di Film Recitati" vertex="1">
+          <mxGeometry height="10" width="10" x="930" y="270" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

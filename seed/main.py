@@ -24,8 +24,15 @@ GENERI_PREDEFINITI = [
     "Fantasy", "Giallo", "Musical", "Storico", "Western"
 ]
 
+def write_to_file(f, cur, query, vars=None):
+    if vars is not None:
+        raw_sql = cur.mogrify(query, vars).decode('utf-8')
+    else:
+        raw_sql = query
+    f.write(raw_sql.strip() + ";\n")
+
 def seed_database():
-    try:
+    with open("seed.sql", "w") as f:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
         print("Connected to PostgreSQL. Starting data insertion...")
@@ -49,23 +56,23 @@ def seed_database():
         all_attori = persone_attori + persone_entrambi
 
         # Inserimento di Azienda, Film, Genere, Regista+Persona, RegistaDelFilm, GenereDelFilm
-        cur.execute("BEGIN TRANSACTION;")
+        write_to_file(f, cur, "BEGIN TRANSACTION;")
 
         ## Generi
         for genere in GENERI_PREDEFINITI:
-            cur.execute("INSERT INTO Genere (Nome) VALUES (%s)", (genere,))
+            write_to_file(f, cur, "INSERT INTO Genere (Nome) VALUES (%s)", (genere,))
 
         ## Registi
         for p in all_registi:
-            cur.execute("INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", p)
-            cur.execute("INSERT INTO Regista (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", p)
+            write_to_file(f, cur, "INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", p)
+            write_to_file(f, cur, "INSERT INTO Regista (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", p)
 
         ## AziendaProduttrice
         aziende = []
         for _ in range(10):
             nome_azienda = fake.unique.company()
             recapito = fake.unique.address()
-            cur.execute(
+            write_to_file(f, cur, 
                 "INSERT INTO AziendaProduttrice (Nome, Recapito, NumeroDiFilmProdotti) VALUES (%s, %s, %s)",
                 (nome_azienda, recapito, 0) # Il trigger aggiornerà questo valore
             )
@@ -79,9 +86,9 @@ def seed_database():
             titolo = fake.unique.catch_phrase()
             anno = fake.year()
             durata = random.randint(80, 180)
-            trama = fake.text(max_nb_chars=200)
+            trama = fake.text(max_nb_chars=50)
             
-            cur.execute("""
+            write_to_file(f, cur, """
                 INSERT INTO Film (Titolo, AnnoDiProduzione, Durata, Trama, AziendaProduttrice)
                 VALUES (%s, %s, %s, %s, %s)
             """, (titolo, anno, durata, trama, azienda))
@@ -90,7 +97,7 @@ def seed_database():
             ## RegistaDelFilm
             registi_film = random.sample(all_registi, k=random.randint(1, 2))
             for r in registi_film:
-                cur.execute("""
+                write_to_file(f, cur, """
                     INSERT INTO RegistaDelFilm (TitoloFilm, AnnoDiProduzioneFilm, NomeRegista, CognomeRegista, DataDiNascitaRegista)
                     VALUES (%s, %s, %s, %s, %s)
                 """, (titolo, anno, r[0], r[1], r[2]))
@@ -98,28 +105,28 @@ def seed_database():
             ## GenereDelFilm
             generi_film = random.sample(GENERI_PREDEFINITI, k=random.randint(1, 3))
             for g in generi_film:
-                cur.execute("INSERT INTO GenereDelFilm (TitoloFilm, AnnoDiProduzioneFilm, NomeGenere) VALUES (%s, %s, %s)",
+                write_to_file(f, cur, "INSERT INTO GenereDelFilm (TitoloFilm, AnnoDiProduzioneFilm, NomeGenere) VALUES (%s, %s, %s)",
                             (titolo, anno, g))
 
-        conn.commit()
+        write_to_file(f, cur, "COMMIT\n")
 
         # Inserimento di Recitazione, Attore+Persona, Ruolo
-        cur.execute("BEGIN TRANSACTION;")
+        write_to_file(f, cur, "BEGIN TRANSACTION;")
 
         ## Attori in Persona
         for nome_a, cognome_a, nascita_a in persone_attori:
-            cur.execute("INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", (nome_a, cognome_a, nascita_a))
+            write_to_file(f, cur, "INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", (nome_a, cognome_a, nascita_a))
 
         recitazioni_create = []
         for nome_a, cognome_a, nascita_a in all_attori:
             ## Attore
-            cur.execute("INSERT INTO Attore (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", (nome_a, cognome_a, nascita_a))
+            write_to_file(f, cur, "INSERT INTO Attore (Nome, Cognome, DataDiNascita, NumeroDiFilmRecitati) VALUES (%s, %s, %s, %s)", (nome_a, cognome_a, nascita_a, 0))
 
             # Facciamo recitare l'attore in 1, 2 o 3 film
             film_per_attore = random.sample(film_creati, k=random.randint(1, 3))
             for titolo, anno in film_per_attore:
                 ## Recitazione
-                cur.execute("""
+                write_to_file(f, cur, """
                     INSERT INTO Recitazione (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
                     VALUES (%s, %s, %s, %s, %s)
                 """, (titolo, anno, nome_a, cognome_a, nascita_a))
@@ -128,12 +135,12 @@ def seed_database():
                 ## Ruoli di questo attore per questo film
                 for _ in range(random.randint(1, 2)):
                     ruolo = fake.unique.job()
-                    cur.execute("""
+                    write_to_file(f, cur, """
                         INSERT INTO Ruolo (NomeRuolo, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
                         VALUES (%s, %s, %s, %s, %s, %s)
                     """, (ruolo, titolo, anno, nome_a, cognome_a, nascita_a))
                 fake.unique.clear()
-        conn.commit()
+        write_to_file(f, cur, "COMMIT\n")
 
         # Inserimento di CopiaFisicaDiFilm, ClienteRegistrato e Noleggi
 
@@ -143,7 +150,7 @@ def seed_database():
             email = fake.unique.email()
             username = fake.unique.user_name()
             password = fake.password(length=12)
-            cur.execute("INSERT INTO ClienteRegistrato (Email, Username, Password) VALUES (%s, %s, %s)",
+            write_to_file(f, cur, "INSERT INTO ClienteRegistrato (Email, Username, Password) VALUES (%s, %s, %s)",
                         (email, username, password))
             clienti_creati.append(email)
 
@@ -152,7 +159,7 @@ def seed_database():
         for film in film_creati:
             titolo, anno = film
             for numero_copia in range(1, random.randint(1, 3) + 1):
-                cur.execute("INSERT INTO CopiaFisicaDiFilm (Numero, TitoloFilm, AnnoFilm) VALUES (%s, %s, %s)",
+                write_to_file(f, cur, "INSERT INTO CopiaFisicaDiFilm (Numero, TitoloFilm, AnnoFilm) VALUES (%s, %s, %s)",
                             (numero_copia, titolo, anno))
                 copie_create.append((numero_copia, titolo, anno))
 
@@ -169,7 +176,7 @@ def seed_database():
                 giorni_effettivi = random.randint(1, durata_max)
                 data_fine = data_inizio + timedelta(days=giorni_effettivi)
                 
-                cur.execute("""
+                write_to_file(f, cur, """
                     INSERT INTO Noleggio (DataDiInizio, NumeroCopia, TitoloFilm, AnnoFilm, 
                                           EmailCliente, DurataMassimaNoleggio, DataDiFine)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -186,24 +193,12 @@ def seed_database():
         for titolo, anno, nome_a, cognome_a, nascita_a in recitazioni_con_frase:
             # 1 o 2 frasi per una recitazione
             for _ in range(random.randint(1, 2)):
-                frase = fake.sentence()
-                cur.execute("""
+                frase = fake.sentence(nb_words=5)
+                write_to_file(f, cur, """
                     INSERT INTO FraseSignificativa (ID, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, Frase)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, (id_frase, titolo, anno, nome_a, cognome_a, nascita_a, frase))
                 id_frase += 1
-
-        conn.commit()
-        print("Done")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        if conn:
-            conn.rollback()
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
 
 
 if __name__ == "__main__":

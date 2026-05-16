@@ -90,6 +90,7 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
         stesso giorno).
       - Ogni attore compaia in almeno un film.
       - Ogni attore svolga uno o più ruoli in ogni film nel quale recita.
+      - Si vuole registrare il numero di film in cui recita ogni attore.
     ],
   ),
   table(
@@ -134,7 +135,7 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
 == Operazioni <operazioni>
 
 Le Operazioni 1-4 sono state definite per poter prepare delle interrogazioni,
-sviluppate in @interrogazioni, mentre le Operazioni 5 e 6 con le relative
+sviluppate in @interrogazioni, mentre le Operazioni 5, 6, 7 e 8 con le relative
 frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
 @ridondanze.
 
@@ -152,6 +153,8 @@ frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
 - _Operazione 6_: Calcola il numero di film prodotti da una data casa
   produttrice. Frequenza: 50 richieste al giorno #footnote[Valore ipotetico -
     media rispetto a tutte le case produttrici.]
+- _Operazione 7_: Inserimento di una recitazione. Frequenza: 570 inserimenti al giorno #footnote[Circa 10 volte il numero di Film].
+- _Operazione 8_: Calcola il numero di film in cui un attore ha recitato. Frequenza: 100 richieste al giorno.
 
 = Progettazione Concettuale
 
@@ -212,7 +215,9 @@ Nota:
   [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
 
   [Produce], [Relazione], [730000],
-  // TODO: lo inseriamo anche per le altre?
+
+  [Recitazione], [Relazione], [7300000 #footnote[Circa 10 volte il numero di Film]],
+  [Attore], [Entità], [2920000 #footnote[Circa il 40% delle Recitazioni]],
 )
 
 === Analisi delle Ridondanze <ridondanze>
@@ -311,6 +316,98 @@ Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
 
 Dato che il costo in assenza di ridondanza, 620 unità al giorno, è minore del
 costo in presenza di ridondanza, 36500342 unità al giorno, si sceglie di
+*mantenere* la ridondanza.
+
+==== Ridondanza 2: Attributo derivato "Numero di Film Recitati"
+
+#block(breakable: false, grid(
+  columns: 1fr,
+  stroke: .2mm + black,
+  inset: 5pt,
+  [*Presenza di ridondanza*],
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 7*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Recita in], [Relazione], [1], [S],
+      [Attore], [Entità], [1], [S],
+      [Attore], [Entità], [1], [L],
+    ),
+
+    $
+      "Totale" & = (1 * "CostoLettura" + 2 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (1 * 1 + 2 * 3) * 570 \
+      & = 3990 "unità di costo al giorno"
+    $,
+  ),
+
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 8*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Attore], [Entità], [1], [L],
+    ),
+
+    $
+      "Totale" & = (1 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (1 * 1 + 0 * 3) * 100 \
+      & = 100 "unità di costo al giorno"
+    $,
+  ),
+
+  $"Totale" = 3990 + 100 = 4090 "unità di costo al giorno"$
+))
+
+#block(breakable: false, grid(
+  columns: 1fr,
+  stroke: .2mm + black,
+  inset: 5pt,
+  [*Assenza di ridondanza*],
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 7*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Recita in], [Relazione], [1], [S],
+    ),
+
+    $
+      "Totale" & = (0 * "CostoLettura" + 1 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (0 * 1 + 1 * 3) * 570 \
+      & = 1710 "unità di costo al giorno"
+    $,
+  ),
+
+  stack(
+    dir: ttb,
+    spacing: 1em,
+    table(
+      columns: (1fr, auto, auto, auto),
+      table.header(table.cell(align: center, colspan: 4)[*Operazione 8*]),
+      [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
+      [Recita in], [Relazione], [1679000], [L],
+    ),
+
+    $
+      "Totale" & = (167900393 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (167900393 * 1 + 0 * 3) * 100 \
+      & = 1679003930 "unità di costo al giorno"
+    $,
+  ),
+
+  $"Totale" = 1710 + 1679003930 = 1679005640 "unità di costo al giorno"$
+))
+
+Dato che il costo in assenza di ridondanza, 4090 unità al giorno, è minore del
+costo in presenza di ridondanza, 1679005640 unità al giorno, si sceglie di
 *mantenere* la ridondanza.
 
 === Eliminazione delle Generalizzazioni
@@ -446,7 +543,7 @@ Nota:
 
 #relation(
   "Attore",
-  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita]],
+  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita], NumeroDiFilmRecitati],
   [#fk {Nome, Cognome, DataDiNascita} $arrow.r$ {Persona.Nome, Persona.Cognome, Persona.DataDiNascita}],
 )
 
@@ -540,6 +637,10 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
   - Inserimento Film
   - Modifica Film (attributo AziendaProduttrice)
   - Cancellazione Film
+- Attributo derivato "Numero di Film Recitati"
+  - Inserimento Recitazione
+  - Modifica Recitazione
+  - Cancellazione Recitazione
 
 Notiamo che, per gli quanto riguardano gli intervalli generati dalle date
 relative ai noleggi, si ipotizza di lavorare con intervalli chiusi. Segue,
