@@ -677,9 +677,6 @@ Per una più semplice e veloce configurazione della base di dati è stato creato
 un comando unico per la creazione delle tabelle, dei triggers, del popolamento
 della base di dati, e dell'esecuzione delle interrogazioni.
 
-In ogni caso, nelle sezioni successive questi passaggi sono descritti uno a
-uno.
-
 ```bash
 psql -d $USER \
     -c "CREATE DATABASE industria_cinematografica;"
@@ -696,6 +693,9 @@ psql -d industria_cinematografica \
     -c "\i setup/query_3.sql"   \
     -c "\i setup/query_4.sql"
 ```
+
+In ogni caso, nelle sezioni successive questi passaggi sono descritti uno a
+uno.
 
 == Creazione della Base di Dati
 
@@ -842,14 +842,24 @@ definite in @operazioni.
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
-=== Interrogazione 5
+// === Interrogazione 5
 
-#let text = read("setup/query_5.sql")
-#show figure: set block(breakable: true)
-#raw(text, block: true, lang: "sql")
+// #let text = read("setup/query_5.sql")
+// #show figure: set block(breakable: true)
+// #raw(text, block: true, lang: "sql")
 
 === Interrogazione 6
 
+Usa l'attributo derivato, dato che la ridondanza è stata mantenuta.
+
 #let text = read("setup/query_6.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
+
+=== Interrogazione 8
+
+Avendo eliminato l'attributo derivato, il numero di film deve essere calcolato.
+
+#let text = read("setup/query_8.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
