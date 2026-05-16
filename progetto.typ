@@ -240,9 +240,9 @@ Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
     ),
 
     $
-      "Totale" & = (3 * "CostoLettura" + 1 * "CostoScrittura") * "FrequenzaOperazione" \
-      & = (3 * 1 + 1 * 3) * 57 \
-      & = 342 "unità di costo al giorno"
+      "Totale" & = (1 * "CostoLettura" + 3 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (1 * 1 + 3 * 3) * 57 \
+      & = 570 "unità di costo al giorno"
     $,
   ),
 
@@ -263,7 +263,7 @@ Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
     $,
   ),
 
-  $"Totale" = 342 + 50 = 392 "unità di costo al giorno"$
+  $"Totale" = 570 + 50 = 620 "unità di costo al giorno"$
 ))
 
 #block(breakable: false, grid(
@@ -283,9 +283,9 @@ Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
     ),
 
     $
-      "Totale" & = (1 * "CostoLettura" + 1 * "CostoScrittura") * "FrequenzaOperazione" \
-      & = (1 * 1 + 1 * 3) * 57 \
-      & = 228 "unità di costo al giorno"
+      "Totale" & = (0 * "CostoLettura" + 2 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (0 * 1 + 2 * 3) * 57 \
+      & = 342 "unità di costo al giorno"
     $,
   ),
 
@@ -306,11 +306,11 @@ Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
     $,
   ),
 
-  $"Totale" = 228 + 36500000 = 36500228 "unità di costo al giorno"$
+  $"Totale" = 342 + 36500000 = 36500342 "unità di costo al giorno"$
 ))
 
-Dato che il costo in assenza di ridondanza, 392 unità al giorno, è minore del
-costo in presenza di ridondanza, 36500228 unità al giorno, si sceglie di
+Dato che il costo in assenza di ridondanza, 620 unità al giorno, è minore del
+costo in presenza di ridondanza, 36500342 unità al giorno, si sceglie di
 *mantenere* la ridondanza.
 
 === Eliminazione delle Generalizzazioni
