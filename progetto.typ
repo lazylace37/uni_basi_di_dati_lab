@@ -555,8 +555,8 @@ Nota:
 
 #relation(
   "RegistaDelFilm",
-  [#underline[TitoloFilm], #underline[AnnoDiProduzioneFilm], #underline[NomeRegista], #underline[CognomeRegista], #underline[AnnoDiNascitaRegista]],
-  [#fk {TitoloFilm, AnnoDiProduzioneFilm, NomeRegista, CognomeRegista, AnnoDiNascitaRegista} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione, Regista.Nome, Regista.Cognome, Regista.AnnoDiNascita}],
+  [#underline[TitoloFilm], #underline[AnnoDiProduzioneFilm], #underline[NomeRegista], #underline[CognomeRegista], #underline[DataDiNascitaRegista]],
+  [#fk {TitoloFilm, AnnoDiProduzioneFilm, NomeRegista, CognomeRegista, DataDiNascitaRegista} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione, Regista.Nome, Regista.Cognome, Regista.AnnoDiNascita}],
 )
 
 #relation(
@@ -600,12 +600,14 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
   - Cancellazione di Film
   - Modifica dell'attributo "AziendaProduttrice" di Film
 - Un genere deve essere associato ad almeno un film
-  - Inserimento Film
+  - Inserimento di Genere
   - Cancellazione Film
   - Modifica di "Genere" nella relazione "GenereDelFilm"
   - Cancellazione di "Genere" nella relazione "GenereDelFilm"
 - Un film deve essere associato ad almeno un genere
-  - Cancellazione di Genere
+  - Inserimento Film
+  - Modifica di "Genere" nella relazione "GenereDelFilm"
+  - Cancellazione di "Genere" nella relazione "GenereDelFilm"
 - Un Film deve avere almeno un Regista
   - Inserimento di Film
   - Cancellazione di Regista
@@ -616,12 +618,13 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
   - Inserimento di Recitazione
 - Un Attore deve recitare in almeno un Film
   - Inserimento di Attore
+  - Modifica di Recitazione
   - Cancellazione di Recitazione
 - Un Regista deve dirigere almeno un Film
   - Inserimento Regista
   - Cancellazione di Film
-  - Modifica di "RegistaDelFilm"
-  - Cancellazione di "RegistaDelFilm"
+  - Modifica di RegistaDelFilm
+  - Cancellazione di RegistaDelFilm
 - Una persona deve essere o un attore, o un regista, o
   entrambi:
   - Inserimento di Persona
