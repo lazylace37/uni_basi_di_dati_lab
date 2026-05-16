@@ -6,7 +6,7 @@ FROM Regista
 		RegistaDelFilm.DataDiNascitaRegista = Regista.DataDiNascita
 GROUP BY Regista.Nome, Regista.Cognome, Regista.DataDiNascita;
 
-SELECT NomeRegista, CognomeRegista, DataDiNascitaRegista
+SELECT NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm
 FROM NumeroFilmPerRegista
 WHERE
 	NumeroFilm >= ALL (
