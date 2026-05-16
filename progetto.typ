@@ -569,7 +569,7 @@ Nota:
   "FraseSignificativa",
   [#underline[ID], Frase, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore],
   [#fk {TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Recitazione.TitoloFilm, Recitazione.AnnoFilm, Recitazione.NomeAttore, Recitazione.CognomeAttore, Recitazione.DataNascitaAttore}],
-  [#vnn {Frase}],
+  [#vnn {Frase, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore}],
 )
 
 #relation(
