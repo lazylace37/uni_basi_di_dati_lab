@@ -393,21 +393,21 @@ costo in presenza di ridondanza, 36500342 unità al giorno, si sceglie di
       columns: (1fr, auto, auto, auto),
       table.header(table.cell(align: center, colspan: 4)[*Operazione 8*]),
       [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-      [Recita in], [Relazione], [1679000], [L],
+      [Recita in], [Relazione], [7300000], [L],
     ),
 
     $
-      "Totale" & = (167900393 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
-      & = (167900393 * 1 + 0 * 3) * 100 \
-      & = 1679003930 "unità di costo al giorno"
+      "Totale" & = (7300000 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (7300000 * 1 + 0 * 3) * 100 \
+      & = 730000000 "unità di costo al giorno"
     $,
   ),
 
-  $"Totale" = 1710 + 1679003930 = 1679005640 "unità di costo al giorno"$
+  $"Totale" = 1710 + 730000000 = 730001710 "unità di costo al giorno"$
 ))
 
 Dato che il costo in assenza di ridondanza, 4090 unità al giorno, è minore del
-costo in presenza di ridondanza, 1679005640 unità al giorno, si sceglie di
+costo in presenza di ridondanza, 730001710 unità al giorno, si sceglie di
 *mantenere* la ridondanza.
 
 === Eliminazione delle Generalizzazioni
