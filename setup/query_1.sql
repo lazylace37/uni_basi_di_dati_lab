@@ -2,8 +2,8 @@
 CREATE VIEW NumeroAttoriPerFilm AS
   SELECT Film.Titolo AS TitoloFilm,
     Film.AnnoDiProduzione AS AnnoFilm,
-    COUNT(Recitazione.*) AS NumeroAttori
-  FROM Film JOIN Recitazione ON
+    COUNT(Recitazione.NomeAttore) AS NumeroAttori
+  FROM Film LEFT JOIN Recitazione ON
     Film.Titolo = Recitazione.TitoloFilm AND
     Film.AnnoDiProduzione = Recitazione.AnnoFilm
   GROUP BY Film.Titolo, Film.AnnoDiProduzione;
