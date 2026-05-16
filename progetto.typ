@@ -670,6 +670,30 @@ Viene riportato il codice di creazione delle relazioni definite in
 
 = Implementazione
 
+Per una più semplice e veloce configurazione della base di dati è stato creato
+un comando unico per la creazione delle tabelle, dei triggers, del popolamento
+della base di dati, e dell'esecuzione delle interrogazioni.
+
+In ogni caso, nelle sezioni successive questi passaggi sono descritti uno a
+uno.
+
+```bash
+psql -d $USER \
+    -c "CREATE DATABASE industria_cinematografica;"
+
+psql -d industria_cinematografica \
+    -c "\i setup/create.sql"    \
+    -c "\i setup/trigger_1.sql" \
+    -c "\i setup/trigger_2.sql" \
+    -c "\i setup/trigger_3.sql" \
+    -c "\i setup/trigger_4.sql" \
+    -c "\i seed/seed.sql"       \
+    -c "\i setup/query_1.sql"   \
+    -c "\i setup/query_2.sql"   \
+    -c "\i setup/query_3.sql"   \
+    -c "\i setup/query_4.sql"
+```
+
 == Creazione della Base di Dati
 
 Per creare una nuova base di dati, eseguire il seguente comando da shell:
@@ -689,11 +713,17 @@ psql -d industria_cinematografica -c "\i setup/create.sql"
 
 == Implementazione dei Trigger
 
-Vengono presentate le implementazioni dei seguenti trigger, scelti per le diverse tipologie di operazioni necessarie per mantenere i vincoli di integrità:
-1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in inserimento su `Persona`.
-2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su `Noleggio`.
-3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su `Film`.
-4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su `Noleggio`.
+Vengono presentate le implementazioni dei seguenti trigger, scelti per le
+diverse tipologie di operazioni necessarie per mantenere i vincoli di
+integrità:
+1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in
+   inserimento su `Persona`.
+2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su
+   `Noleggio`.
+3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su
+   `Film`.
+4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su
+   `Noleggio`.
 
 Per il setup dei triggers, eseguire:
 ```bash
@@ -734,10 +764,10 @@ Per la generazione di un dataset realistico, si è utilizzata la libreria
 _faker_, capace di generare dei dati realistici di vari domini, come nomi di
 aziende, di persone, ecc.
 L'uso del linguaggio di programmazione Python insieme a _faker_ ci ha permesso
-di popolare la base di dati con dati piuttosto veritieri e con volumi
-compatibili con quelli supposti in @tavola-volumi.
+di popolare la base di dati con dati piuttosto veritieri, anche se con volumi
+ridotti rispetto a quelli supposti in @tavola-volumi.
 
-L'ordine degli inserimenti deve rispettare i vincoli definiti. In particolare,
+L'ordine degli inserimenti deve rispettare i vincoli definiti. In particolare
 sono state evidenziate queste dipendenze cicliche tra relazioni, causate dalla
 partecipazione obbligatoria delle relazioni coinvolte.
 L'inserimento deve dunque avvenire in una o più transazioni con il controllo
@@ -748,7 +778,7 @@ dei vincoli posticipato (DEFERRED) al COMMIT.
   deve essere prodotto da un'Azienda
 - Film $<->$ Genere: un Film deve avere un Genere; un Genere deve essere
   associato ad un Film
-- Film $<->$ Regista: un Film deve avere un Regista che lo dirige; il Regista
+- Film $<->$ Regista: un Film deve avere un Regista che lo dirige; un Regista
   deve dirigere un Film
 - Attore $<->$ Recitazione $<->$ Ruolo: un Attore deve partecipare ad almeno
   una Recitazione; la Recitazione si riferisce a un Attore e richiede almeno un
@@ -774,6 +804,11 @@ In definitiva, lo script di inserimento `./seed/main.py`:
 3. Inserisce, in questo ordine, ClienteRegistrato, CopiaFisicaDiFilm e
    Noleggio.
 4. Inserisce FrasiSignificative.
+
+Allo scopo di rendere la configurazione del database più semplice, lo script
+Python non inizializza la base di dati, ma crea un file `seed.sql` con le
+istruzioni di inserimento. In questo modo non è necessario installare le
+dipendenze richieste dallo script.
 
 == Interrogazioni <interrogazioni>
 
