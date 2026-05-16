@@ -4,7 +4,7 @@ CREATE VIEW Attore_AziendeProd AS
      ON  Recitazione.TitoloFilm = Film.Titolo
      AND Recitazione.AnnoFilm   = Film.AnnoDiProduzione;
 
-SELECT A1.NomeAttore, A1.CognomeAttore, A1.DataNascitaAttore
+SELECT DISTINCT A1.NomeAttore, A1.CognomeAttore, A1.DataNascitaAttore
 FROM   Attore_AziendeProd A1
 WHERE  NOT EXISTS (
   SELECT *
