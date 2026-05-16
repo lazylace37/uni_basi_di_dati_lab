@@ -110,24 +110,29 @@ def seed_database():
         for nome_a, cognome_a, nascita_a in persone_attori:
             cur.execute("INSERT INTO Persona (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", (nome_a, cognome_a, nascita_a))
 
+        recitazioni_create = []
         for nome_a, cognome_a, nascita_a in all_attori:
             ## Attore
             cur.execute("INSERT INTO Attore (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", (nome_a, cognome_a, nascita_a))
 
-            titolo, anno = random.choice(film_creati) # Facciamo recitare a questo Attore un Film random
+            # Facciamo recitare l'attore in 1, 2 o 3 film
+            film_per_attore = random.sample(film_creati, k=random.randint(1, 3))
+            for titolo, anno in film_per_attore:
+                ## Recitazione
+                cur.execute("""
+                    INSERT INTO Recitazione (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (titolo, anno, nome_a, cognome_a, nascita_a))
+                recitazioni_create.append((titolo, anno, nome_a, cognome_a, nascita_a))
 
-            ## Recitazione
-            cur.execute("""
-                INSERT INTO Recitazione (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (titolo, anno, nome_a, cognome_a, nascita_a))
-
-            ## Ruolo
-            ruolo = fake.job()
-            cur.execute("""
-                INSERT INTO Ruolo (NomeRuolo, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (ruolo, titolo, anno, nome_a, cognome_a, nascita_a))
+                ## Ruoli di questo attore per questo film
+                for _ in range(random.randint(1, 2)):
+                    ruolo = fake.unique.job()
+                    cur.execute("""
+                        INSERT INTO Ruolo (NomeRuolo, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                    """, (ruolo, titolo, anno, nome_a, cognome_a, nascita_a))
+                fake.unique.clear()
         conn.commit()
 
         # Inserimento di CopiaFisicaDiFilm, ClienteRegistrato e Noleggi
@@ -154,12 +159,12 @@ def seed_database():
         ## Noleggio
         for copia in copie_create:
             numero, titolo, anno = copia
-            cliente = random.choice(clienti_creati)
-            
+
             # Generiamo una serie temporale coerente per non sovrapporre le date sulla stessa copia
             data_inizio = fake.date_time_between(start_date="-1y", end_date="-10d")
             
             for i in range(random.randint(0, 3)):
+                cliente = random.choice(clienti_creati)
                 durata_max = random.randint(3, 14)
                 giorni_effettivi = random.randint(1, durata_max)
                 data_fine = data_inizio + timedelta(days=giorni_effettivi)
@@ -172,6 +177,21 @@ def seed_database():
                 
                 # Spostiamo la data inizio avanti rispetto alla fine per il noleggio successivo
                 data_inizio = data_fine + timedelta(days=random.randint(1, 5))
+
+        # Inserimento di FraseSignificativa
+        # Scegliamo un po' di recitazioni
+        recitazioni_con_frase = random.sample(recitazioni_create, k=int(len(recitazioni_create) * 0.3))
+
+        id_frase = 1
+        for titolo, anno, nome_a, cognome_a, nascita_a in recitazioni_con_frase:
+            # 1 o 2 frasi per una recitazione
+            for _ in range(random.randint(1, 2)):
+                frase = fake.sentence()
+                cur.execute("""
+                    INSERT INTO FraseSignificativa (ID, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, Frase)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (id_frase, titolo, anno, nome_a, cognome_a, nascita_a, frase))
+                id_frase += 1
 
         conn.commit()
         print("Done")
