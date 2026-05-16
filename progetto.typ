@@ -1,3 +1,5 @@
+#set smartquote(enabled: true, alternative: true)
+
 #import "templ.typ": *
 #show: templ.with(
   title: "Progetto di Laboratorio di Basi di Dati",
@@ -5,6 +7,8 @@
   font-size: 11pt,
   font: "New Computer Modern",
 )
+#set table(stroke: .2mm + black)
+#show raw: set block(width: 100%, inset: 7pt, stroke: .2mm + black, radius: 1%)
 
 = Analisi dei Requisiti
 
@@ -33,14 +37,14 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
     [],
     [Film],
 
-    [Copia fisica\ di un Film], [], [], [Film,\ Cliente],
+    [Copia fisica\ di un Film\*], [], [], [Film,\ Cliente],
     [Azienda\ Produttrice], [Produce uno o più film], [], [Film],
-    [Cliente],
+    [Cliente\*],
     [Noleggia una o più copie fisiche di film],
     [Cliente Registrato],
     [Film],
   ),
-  caption: [Glossario],
+  caption: [Glossario (\* aggiunta alla consegna)],
 )
 
 == Strutturazione dei Requisiti
@@ -211,36 +215,15 @@ Nota:
   // TODO: lo inseriamo anche per le altre?
 )
 
-/*==== Tavola delle Operazioni
-
-#stack(
-  dir: ttb,
-  spacing: 2em,
-  table(
-    columns: (1fr, 1fr, 1fr, 1fr),
-    table.header(table.cell(align: center, colspan: 4)[*Operazione 5*]),
-    [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-    [Azienda Produttrice], [Entità], [1], [Scrittura],
-    [Produce], [Relazione], [1], [Scrittura],
-  ),
-)*/
-
 === Analisi delle Ridondanze <ridondanze>
 
-// Trovare le ridondanze:
-// - attributi derivabili:
-//   - da altri attributi della stessa entità
-//   - da altri attributi di altre entità o relazioni (es. aggregazioni)
-//   - conteggio di occorrenze
-// - relazioni derivabili: cicli
-
-Assumiamo un costo di un accesso in lettura di $1$, e in scrittura di $3$.
+Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
 
 ==== Ridondanza 1: Attributo derivato "Numero di Film Prodotti"
 
 #block(breakable: false, grid(
   columns: 1fr,
-  stroke: 1pt + black,
+  stroke: .2mm + black,
   inset: 5pt,
   [*Presenza di ridondanza*],
   stack(
@@ -285,7 +268,7 @@ Assumiamo un costo di un accesso in lettura di $1$, e in scrittura di $3$.
 
 #block(breakable: false, grid(
   columns: 1fr,
-  stroke: 1pt + black,
+  stroke: .2mm + black,
   inset: 5pt,
   [*Assenza di ridondanza*],
   stack(
@@ -326,28 +309,23 @@ Assumiamo un costo di un accesso in lettura di $1$, e in scrittura di $3$.
   $"Totale" = 228 + 36500000 = 36500228 "unità di costo al giorno"$
 ))
 
-#box(
-  stroke: 1pt + black,
-  inset: 5pt,
-  width: 100%,
-)[Scegliamo di mantenere la ridondanza.]
-
+Dato che il costo in assenza di ridondanza, 392 unità al giorno, è minore del
+costo in presenza di ridondanza, 36500228 unità al giorno, si sceglie di
+*mantenere* la ridondanza.
 
 === Eliminazione delle Generalizzazioni
 
 - Generalizzazione Persona: Siccome la generalizzazione è totale e sovrapposta,
-  usiamo il metodo ibrido per la rimozione della generalizzazione, in cui
-  aggiungiamo per ogni figlio una relazione con il genitore. Le entità figli
+  usiamo il metodo ibrido per la rimozione della generalizzazione, in cui si
+  mette ogni entità figlia in relazione con l'entità genitore. Le entità figlie
   diventano entità deboli.
   Aggiungiamo un vincolo di integrità per fare in modo che Persona si
   specializzi obbligatoriamente in almeno uno tra Attore e Resista.
 - Generalizzazione Noleggio: Siccome le generalizzazione è totale e disgiunta,
-  applichiamo la tecnica della rimozione dei figli. Per discriminare tra
-  noleggio corrente e noleggio passato, utilizziamo l'attributo opzionale "Data
-  di fine" come discriminante.
-// Siccome il noleggio corrente è al massimo 1, questo non comporta
-
-// TODO: spiegare perché non le altre
+  applichiamo la tecnica della rimozione dei figli.
+  Per discriminare tra Noleggio Corrente e Noleggio Passato utilizziamo
+  l'attributo "Data di fine", che ora diventa opzionale, come discriminante:
+  se è presente, il Noleggio è da considerarsi passato, altrimenti è corrente.
 
 === Traduzione degli Attributi Multivalore
 
@@ -356,14 +334,7 @@ Traduzione degli attributi "Frasi significative" e "Ruoli" della relazione
 - "Frasi Significative": aggiungiamo un'entità debole, in relazione $(0,N)$
   con "Recita in", dato che una stessa frase significativa può essere detta da
   attori diversi o in film diversi.
-// - "Ruolo": aggiungiamo un'entità (non debole), in relazione $(1,N)$ con "Recita
-//   in". Si è ipotizzato che un ruolo sia indicativo del tipo di personaggio
-//   interpretato (ad es. protagonista, antagonista, comparsa, ...) invece che
-//   legata allo specifico personaggio del film. // (ad es. )
 - "Ruolo": aggiungiamo un'entità debole, in relazione $(1,1)$ con "Recita in".
-// Si è ipotizzato che un ruolo sia indicativo del tipo di personaggio
-// interpretato (ad es. protagonista, antagonista, comparsa, ...) invece che
-// legata allo specifico personaggio del film. // (ad es. )
 
 Traduzione dell'attributo multivalore "Generi": aggiungiamo una entità (non
 debole) in relazione $(1,N)$ con "Film".
@@ -668,8 +639,8 @@ compatibili con quelli supposti in @tavola-volumi.
 L'ordine degli inserimenti deve rispettare i vincoli definiti. In particolare,
 sono state evidenziate queste dipendenze cicliche tra relazioni, causate dalla
 partecipazione obbligatoria delle relazioni coinvolte.
-L'inserimento deve dunque avvenire in una transazione con il controllo dei
-vincoli posticipato (DEFERRED) al COMMIT.
+L'inserimento deve dunque avvenire in una o più transazioni con il controllo
+dei vincoli posticipato (DEFERRED) al COMMIT.
 - Persona $<->$ Attore/Regista: una Persona deve essere o un Attore o un
   Regista o entrambi; un Attore/Regista deve essere una Persona
 - Azienda $<->$ Film: un'Azienda deve avere prodotto almeno un Film; un Film
@@ -681,6 +652,27 @@ vincoli posticipato (DEFERRED) al COMMIT.
 - Attore $<->$ Recitazione $<->$ Ruolo: un Attore deve partecipare ad almeno
   una Recitazione; la Recitazione si riferisce a un Attore e richiede almeno un
   Ruolo.
+
+Allora, Azienda, Film, Generi, Registi (e Persone), RegistaDelFilm e
+GenereDelFilm devono essere inseriti in una transazione.
+Stessa cosa per Recitazioni, Attori (e Persone), e Ruoli.
+
+Inoltre, l'inserimento di Noleggio deve avvenire successivamente
+all'inserimento del relativo Cliente Registrato e della relativa Copia fisica
+di film (tra Cliente Registrato e Copia fisica di film non è necessario un
+ordinamento).
+
+Infine, le Frasi Significative possono essere inserite in qualunque momento
+successivo all'inserimento della relativa Recitazione.
+
+In definitiva, lo script di inserimento `./seed/main.py`:
+1. Crea una transazione in cui inserisce Aziende, Film, Generi, Registi (e le
+   associate Persone), RegistaDelFilm e GenereDelFilm, con vincoli DEFERRED.
+2. Crea una seconda transazione in cui inserisce Recitazioni, Attori (e le
+   associate Persone), e Ruoli, con vincoli DEFERRED.
+3. Inserisce, in questo ordine, ClienteRegistrato, CopiaFisicaDiFilm e
+   Noleggio.
+4. Inserisce FrasiSignificative.
 
 == Interrogazioni <interrogazioni>
 
