@@ -213,8 +213,8 @@ Nota:
   [Film],
   [Entità],
   [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
-
   [Produce], [Relazione], [730000],
+  [AziendaProduttrice], [Entità], [10000],
 
   [Recitazione], [Relazione], [7300000 #footnote[Circa 10 volte il numero di Film]],
   [Attore], [Entità], [2920000 #footnote[Circa il 40% delle Recitazioni]],
@@ -301,22 +301,22 @@ Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
       columns: (1fr, auto, auto, auto),
       table.header(table.cell(align: center, colspan: 4)[*Operazione 6*]),
       [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-      [Produce], [Relazione], [730000], [L],
+      [Produce], [Relazione], [73#footnote[Numero medio di Film prodotti per Azienda Produttrice = Volume(Produce) / Volume(Azienda)]], [L],
     ),
 
     $
-      "Totale" & = (730000 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
-      & = (730000 * 1 + 0 * 3) * 50 \
-      & = 36500000 "unità di costo al giorno"
+      "Totale" & = (73 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (73 * 1 + 0 * 3) * 50 \
+      & = 3650 "unità di costo al giorno"
     $,
   ),
 
-  $"Totale" = 342 + 36500000 = 36500342 "unità di costo al giorno"$
+  $"Totale" = 342 + 3650 = 3992 "unità di costo al giorno"$
 ))
 
-Dato che il costo in assenza di ridondanza, 620 unità al giorno, è minore del
-costo in presenza di ridondanza, 36500342 unità al giorno, si sceglie di
-*mantenere* la ridondanza.
+Dato che il costo in presenza di ridondanza, 620 unità al giorno, è minore del
+costo in assenza di ridondanza, 3992 unità al giorno, si sceglie di *mantenere*
+la ridondanza.
 
 ==== Ridondanza 2: Attributo derivato "Numero di Film Recitati"
 
@@ -393,22 +393,22 @@ costo in presenza di ridondanza, 36500342 unità al giorno, si sceglie di
       columns: (1fr, auto, auto, auto),
       table.header(table.cell(align: center, colspan: 4)[*Operazione 8*]),
       [*Concetto*], [*Costrutto*], [*Accessi*], [*Tipo*],
-      [Recita in], [Relazione], [7300000], [L],
+      [Recita in], [Relazione], [3#footnote[Volume(Recitazione) / Volume(Attore) = 2.3 arrotondato a 3]], [L],
     ),
 
     $
-      "Totale" & = (7300000 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
-      & = (7300000 * 1 + 0 * 3) * 100 \
-      & = 730000000 "unità di costo al giorno"
+      "Totale" & = (3 * "CostoLettura" + 0 * "CostoScrittura") * "FrequenzaOperazione" \
+      & = (3 * 1 + 0 * 3) * 100 \
+      & = 300 "unità di costo al giorno"
     $,
   ),
 
-  $"Totale" = 1710 + 730000000 = 730001710 "unità di costo al giorno"$
+  $"Totale" = 1710 + 300 = 2010 "unità di costo al giorno"$
 ))
 
-Dato che il costo in assenza di ridondanza, 4090 unità al giorno, è minore del
-costo in presenza di ridondanza, 730001710 unità al giorno, si sceglie di
-*mantenere* la ridondanza.
+Dato che il costo in presenza di ridondanza, 4090 unità al giorno, è maggiore
+del costo in assenza di ridondanza, 2010 unità al giorno, si sceglie di
+*eliminare* la ridondanza.
 
 === Eliminazione delle Generalizzazioni
 
@@ -543,7 +543,7 @@ Nota:
 
 #relation(
   "Attore",
-  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita], NumeroDiFilmRecitati],
+  [#underline[Nome], #underline[Cognome], #underline[DataDiNascita]],
   [#fk {Nome, Cognome, DataDiNascita} $arrow.r$ {Persona.Nome, Persona.Cognome, Persona.DataDiNascita}],
 )
 

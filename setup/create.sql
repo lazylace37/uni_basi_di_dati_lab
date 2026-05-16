@@ -26,7 +26,6 @@ CREATE TABLE Attore (
     Nome VARCHAR(100),
     Cognome VARCHAR(100),
     DataDiNascita DATE,
-    NumeroDiFilmRecitati INT NOT NULL,
 
     PRIMARY KEY (Nome, Cognome, DataDiNascita),
     FOREIGN KEY (Nome, Cognome, DataDiNascita)

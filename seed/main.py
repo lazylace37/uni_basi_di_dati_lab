@@ -120,7 +120,7 @@ def seed_database():
         recitazioni_create = []
         for nome_a, cognome_a, nascita_a in all_attori:
             ## Attore
-            write_to_file(f, cur, "INSERT INTO Attore (Nome, Cognome, DataDiNascita, NumeroDiFilmRecitati) VALUES (%s, %s, %s, %s)", (nome_a, cognome_a, nascita_a, 0))
+            write_to_file(f, cur, "INSERT INTO Attore (Nome, Cognome, DataDiNascita) VALUES (%s, %s, %s)", (nome_a, cognome_a, nascita_a))
 
             # Facciamo recitare l'attore in 1, 2 o 3 film
             film_per_attore = random.sample(film_creati, k=random.randint(1, 3))
