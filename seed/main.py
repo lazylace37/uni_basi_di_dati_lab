@@ -163,6 +163,10 @@ def seed_database():
                             (numero_copia, titolo, anno))
                 copie_create.append((numero_copia, titolo, anno))
 
+        clienti_simili = clienti_creati[:2]
+        clienti_normali = clienti_creati[2:]
+        film_per_clienti_simili = random.sample(film_creati, k=random.randint(2, 2))
+
         ## Noleggio
         for copia in copie_create:
             numero, titolo, anno = copia
@@ -170,8 +174,24 @@ def seed_database():
             # Generiamo una serie temporale coerente per non sovrapporre le date sulla stessa copia
             data_inizio = fake.date_time_between(start_date="-1y", end_date="-10d")
             
+            # Clienti che hanno noleggiato gli stessi film
+            if (titolo, anno) in film_per_clienti_simili and numero == 1:
+                for cliente in clienti_simili:
+                    durata_max = random.randint(3, 14)
+                    giorni_effettivi = random.randint(1, durata_max)
+                    data_fine = data_inizio + timedelta(days=giorni_effettivi)
+                    
+                    write_to_file(f, cur, """
+                        INSERT INTO Noleggio (DataDiInizio, NumeroCopia, TitoloFilm, AnnoFilm, 
+                                              EmailCliente, DurataMassimaNoleggio, DataDiFine)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """, (data_inizio.date(), numero, titolo, anno, cliente, durata_max, data_fine.date()))
+                    
+                    data_inizio = data_fine + timedelta(days=random.randint(1, 5))
+
+            # Noleggi casuali per i clienti normali
             for i in range(random.randint(0, 3)):
-                cliente = random.choice(clienti_creati)
+                cliente = random.choice(clienti_normali)
                 durata_max = random.randint(3, 14)
                 giorni_effettivi = random.randint(1, durata_max)
                 data_fine = data_inizio + timedelta(days=giorni_effettivi)

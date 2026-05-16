@@ -9,7 +9,7 @@ psql -d $USER \
     -c "DROP DATABASE industria_cinematografica WITH (FORCE);" \
     -c "CREATE DATABASE industria_cinematografica;"
 
-psql -d industria_cinematografica \
+psql -d industria_cinematografica -P pager \
     -c "\i setup/create.sql"    \
     -c "\i setup/trigger_1.sql" \
     -c "\i setup/trigger_2.sql" \
