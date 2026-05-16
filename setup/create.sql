@@ -31,7 +31,7 @@ CREATE TABLE Attore (
     FOREIGN KEY (Nome, Cognome, DataDiNascita)
         REFERENCES Persona(Nome, Cognome, DataDiNascita)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE Regista (
@@ -43,7 +43,7 @@ CREATE TABLE Regista (
     FOREIGN KEY (Nome, Cognome, DataDiNascita)
         REFERENCES Persona(Nome, Cognome, DataDiNascita)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE Film (
@@ -57,7 +57,7 @@ CREATE TABLE Film (
     FOREIGN KEY (AziendaProduttrice)
         REFERENCES AziendaProduttrice(Nome)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE RegistaDelFilm (
@@ -71,11 +71,11 @@ CREATE TABLE RegistaDelFilm (
     FOREIGN KEY (TitoloFilm, AnnoDiProduzioneFilm)
         REFERENCES Film(Titolo, AnnoDiProduzione)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
+        ON DELETE NO ACTION,
     FOREIGN KEY (NomeRegista, CognomeRegista, DataDiNascitaRegista)
         REFERENCES Regista(Nome, Cognome, DataDiNascita)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE GenereDelFilm (
@@ -87,11 +87,11 @@ CREATE TABLE GenereDelFilm (
     FOREIGN KEY (TitoloFilm, AnnoDiProduzioneFilm)
         REFERENCES Film(Titolo, AnnoDiProduzione)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
+        ON DELETE NO ACTION,
     FOREIGN KEY (NomeGenere)
         REFERENCES Genere(Nome)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE CopiaFisicaDiFilm (
@@ -103,7 +103,7 @@ CREATE TABLE CopiaFisicaDiFilm (
     FOREIGN KEY (TitoloFilm, AnnoFilm)
         REFERENCES Film(Titolo, AnnoDiProduzione)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE Recitazione (
@@ -117,11 +117,11 @@ CREATE TABLE Recitazione (
     FOREIGN KEY (TitoloFilm, AnnoFilm)
         REFERENCES Film(Titolo, AnnoDiProduzione)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
+        ON DELETE NO ACTION,
     FOREIGN KEY (NomeAttore, CognomeAttore, DataNascitaAttore)
         REFERENCES Attore(Nome, Cognome, DataDiNascita)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE Ruolo (
@@ -136,7 +136,7 @@ CREATE TABLE Ruolo (
     FOREIGN KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
         REFERENCES Recitazione(TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE FraseSignificativa (
@@ -152,7 +152,7 @@ CREATE TABLE FraseSignificativa (
     FOREIGN KEY (TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
         REFERENCES Recitazione(TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
 
 CREATE TABLE Noleggio (
@@ -168,9 +168,9 @@ CREATE TABLE Noleggio (
     FOREIGN KEY (NumeroCopia, TitoloFilm, AnnoFilm)
         REFERENCES CopiaFisicaDiFilm(Numero, TitoloFilm, AnnoFilm)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
+        ON DELETE NO ACTION,
     FOREIGN KEY (EmailCliente)
         REFERENCES ClienteRegistrato(Email)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
 );
