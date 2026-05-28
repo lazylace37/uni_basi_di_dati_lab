@@ -140,7 +140,7 @@ CREATE TABLE Ruolo (
 );
 
 CREATE TABLE FraseSignificativa (
-    ID INT,
+    ID INT AUTO_INCREMENT,
     TitoloFilm VARCHAR(255) NOT NULL,
     AnnoFilm INT NOT NULL,
     NomeAttore VARCHAR(100) NOT NULL,

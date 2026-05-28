@@ -145,22 +145,23 @@ sviluppate in @interrogazioni, mentre le Operazioni 5, 6, 7 e 8 con le relative
 frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
 @ridondanze.
 
-- _Operazione 1_: Ottieni il numero medio di attori che hanno partecipato in
+- _Operazione 1 (interrogazione)_: Ottieni il numero medio di attori che hanno partecipato in
   film di uno specifico genere.
-- _Operazione 2_: Ottieni le coppie di clienti registrati che hanno visto gli
+- _Operazione 2 (interrogazione)_: Ottieni le coppie di clienti registrati che hanno visto gli
   stessi film.
-- _Operazione 3_: Ottieni il regista che ha diretto il numero massimo di film.
-- _Operazione 4_: Ottieni tutti gli attori che hanno recitato solo a film della
+- _Operazione 3 (interrogazione)_: Ottieni il regista che ha diretto il numero massimo di film.
+- _Operazione 4 (interrogazione)_: Ottieni tutti gli attori che hanno recitato solo a film della
   stessa casa produttrice.
-- _Operazione 5_: Inserimento di nuovo film prodotto da una data casa
+- _Operazione 5_ (inserimento): Inserimento di nuovo film prodotto da una data casa
   produttrice. Frequenza: 57 inserimenti al giorno #footnote[Dal sito web IMDB,
     risulta che nell'anno 2024 sono stati rilasciati 20844 film, ovvero circa 57
     film al giorno.]
-- _Operazione 6_: Calcola il numero di film prodotti da una data casa
+- _Operazione 6_ (interrogazione): Calcola il numero di film prodotti da una data casa
   produttrice. Frequenza: 50 richieste al giorno #footnote[Valore ipotetico -
     media rispetto a tutte le case produttrici.]
-- _Operazione 7_: Inserimento di una recitazione. Frequenza: 570 inserimenti al giorno #footnote[Circa 10 volte il numero di Film].
-- _Operazione 8_: Calcola il numero di film in cui un attore ha recitato. Frequenza: 100 richieste al giorno.
+- _Operazione 7_ (inserimento): Inserimento di una recitazione, con relativo ruolo e frase significativa. Frequenza: 570 inserimenti al giorno #footnote[Circa 10 volte il numero di Film].
+- _Operazione 8_ (interrogazione): Calcola il numero di film in cui un attore ha recitato. Frequenza: 100 richieste al giorno.
+- _Operazione 9_ (rimozione): Rimozione di un film. 
 
 = Progettazione Concettuale
 
@@ -721,7 +722,9 @@ psql -d industria_cinematografica -P pager \
     -c "\i setup/query_1.sql"   \
     -c "\i setup/query_2.sql"   \
     -c "\i setup/query_3.sql"   \
-    -c "\i setup/query_4.sql"
+    -c "\i setup/query_4.sql"   \
+    -c "\i setup/query_6.sql"   \
+    -c "\i setup/query_8.sql"   \
 ```
 
 Al fine di porre ulteriore chiarezza, nelle sezioni successive vengono descritti 
@@ -751,14 +754,14 @@ psql -d industria_cinematografica -c "\i setup/create.sql"
 Vengono presentate le implementazioni dei seguenti trigger, scelti per le
 diverse tipologie di operazioni necessarie per mantenere i vincoli di
 integrità:
-1. _Una persona deve essere o un attore, o un regista, o entrambi_: Trigger in
-   inserimento su `Persona`.
-2. _Ci può essere al massimo un noleggio attivo_: Trigger in modifica su
-   `Noleggio`.
-3. _Attributo derivato "Numero di Film Prodotti"_: Trigger in cancellazione su
-   `Film`.
-4. _Intervalli di noleggio non sovrapposti_: Trigger in inserimento su
-   `Noleggio`.
+1. *_Una persona deve essere o un attore, o un regista, o entrambi_*: Trigger in
+   inserimento su _Persona_.
+2. *_Ci può essere al massimo un noleggio attivo_*: Trigger in modifica su
+   _Noleggio_.
+3. *_Attributo derivato "Numero di Film Prodotti"_*: Trigger in cancellazione su
+   _Film_.
+4. *_Intervalli di noleggio non sovrapposti_*: Trigger in inserimento su
+   _Noleggio_.
 
 Per il setup dei triggers, eseguire:
 ```bash
@@ -894,6 +897,17 @@ dato che la ridondanza è stata mantenuta.
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
+=== Operazione 7
+
+L'operazione 7, è di inserimento. Si nota che tutti i parametri prefissati con 
+`$` sono da considerarsi come variabili, e dunque da sostituire con i valori di
+input desiderati.
+
+#let text = read("setup/query_7.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
+
+
 === Operazione 8
 
 Avendo eliminato l'attributo derivato _numero di film recitati_ , il numero di
@@ -903,6 +917,21 @@ film deve essere calcolato.
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
+=== Operazione 9
+
+L'operazione 9 é di cancellazione. Notiamo tuttavia che, a causa dell'utilizzo
+di `ON DELETE NO ACTION` per la maggior parte delle chiavi esterne, è necessario
+cancellare anche tutte le istanze correlate al film da cancellare. A causa delle
+dipendenze cicliche tra le relazioni, è necessario eseguire questa operazione in
+una unica transazione.
+
+Come l'operazione 7, anche in questo caso tutti i parametri prefissati con `$` 
+sono da considerarsi come variabili, e dunque da sostituire con i valori di 
+input desiderati.
+
+#let text = read("setup/query_9.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
 = Conclusioni
 In questo progetto è stata progettata una base di dati per un'industria cinematografica, partendo da un modello concettuale, passando per un modello logico, fino ad arrivare alla progettazione fisica, con la creazione dello schema in SQL DDL, l'implementazione dei trigger, il popolamento della base di dati, e l'esecuzione di alcune interrogazioni. \
