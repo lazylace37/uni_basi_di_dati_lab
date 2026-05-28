@@ -43,23 +43,21 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
     [Noleggia una o più copie fisiche di film],
     [Cliente Registrato],
     [Film],
+
+    [Ruolo], [Svolto da un attore in un film, indica il personaggio interpretato _(es. Cenerentola)_], [], [Attore,\ Film],
   ),
   caption: [Glossario (\* aggiunta alla consegna)],
 )
 
 == Strutturazione dei Requisiti
+Si supponga di aver collezionato, dalla originale consegna,
+il seguente insieme di requisiti per la progettazione di una base di dati
+relazionale riguardante la gestione di informazioni
+sull'industria cinematografica.
 
 #stack(
   dir: ttb,
-  spacing: 1em,
-  table(
-    columns: 1fr,
-    table.header(table.cell(align: center)[*Frasi di carattere generale*]),
-    [Si supponga di aver collezionato il seguente insieme di
-      requisiti per la progettazione di una base di dati
-      relazionale per la gestione di informazioni
-      sull'industria cinematografica.],
-  ),
+  spacing: 0.75em,
   table(
     columns: 1fr,
     table.header(table.cell(align: center)[*Frasi relative a film*]),
@@ -69,7 +67,7 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
         due o più film con lo stesso titolo, ma ammettiamo che film con lo stesso
         titolo possano essere prodotti in anni diversi, come accade nel caso dei
         remake).
-      - Ogni film abbia una durata espressa in minuti, un’unica azienda
+      - Ogni film abbia una durata espressa in minuti, un'unica azienda
         produttrice e sia classificato come appartenente ad uno o più generi
         (commedia, thriller, film dell'orrore, fantasy, ..)
       - Ogni film abbia uno o più registi e zero, uno o più autori che vi
@@ -116,11 +114,19 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
       - Ogni azienda produttrice produca uno o più film.
     ],
   ),
+)
+
+#v(1em)
+Si supponga di aver collezionato anche gli ulteriori requisiti, in aggiunta alla consegna originale.
+
+#stack(
+  dir: ttb,
+  spacing: 1em,
   table(
     columns: 1fr,
     table.header(table.cell(
       align: center,
-    )[*Frasi relative a videonoleggio (aggiunta alla consegna)*]),
+    )[*Frasi relative a videonoleggio*]),
     [
       Si vuole gestire il videonoleggio di film da parte dei clienti registrati.
       - Un cliente può noleggiare una o più copie fisiche di un film per un
@@ -158,10 +164,13 @@ frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
 
 = Progettazione Concettuale
 
-Come strategia di progettazione è stata scelta la strategia _inside out_,
-partendo dall'entità Film e man mano allargando lo schema al resto dei concetti
-identificati. Per questo è risultato utile il Glossario, da cui si è dedotto
-come Film fosse l'entità principale da cui tutte le altre dipendessero.
+Dall'analisi del testo e dei requisiti è stato creato il seguente schema E-R.
+
+Notiamo subito che il metodo di progettazione scelto è stato l'utilizzo della 
+strategia _inside out_: lo schema è stato quindi definito partendo dall'entità _Film_
+e, poco a poco, è stato allargato comprendendo il resto dei concetti identificati. \
+È risultato infatti utile il Glossario, dal quale si è dedotto
+come _Film_ fosse l'entità principale da cui tutte le altre dipendessero.
 
 #figure(
   image("ER-ER.png", format: "png", width: 95%),
@@ -170,19 +179,19 @@ come Film fosse l'entità principale da cui tutte le altre dipendessero.
   ],
 )
 
-Alcune note:
-- Per `Copia fisica di Film`, entità debole di `Film`, si è usato il pattern di
-  progettazione _istanza di_. Una copia fisica ha un numero che la identifica
+Seguono alcune osservazioni sullo schema E-R:
+- Per _Copia fisica di Film_, entità debole di _Film_, si è usato il pattern di
+  progettazione _istanza di_: una copia fisica ha un numero che la identifica
   tra tutte le copie fisiche di un determinato film.
-- Per `Azienda Produttrice` viene mantenuto il numero di film da essa prodotti
+- In _Azienda Produttrice_ viene mantenuto il numero di film da essa prodotti
   come un attributo derivato (derivato dalla relazione Produce).
 - Per i noleggi si è usato il pattern per la storicizzazione, quindi
-  specializzando il Noleggio in `Noleggio Corrente` e `Noleggio Passato`;
-  quest'ultimo ha l'attributo `Data di Fine`.
+  specializzando il _Noleggio_ in _Noleggio Corrente_ e _Noleggio Passato_;
+  quest'ultimo ha l'attributo _Data di Fine_.
 // Il noleggio è relativo ad una specifica copia fisica di film, dunque si è
 // supposto che l'attributo `Data di Inizio` fosse sufficiente ad identificare
-- Per `Cliente Registrato` sono presenti più chiavi candidate.
-- Per `Azienda Produttrice` sono presenti più chiavi candidate.
+- In _Cliente Registrato_ sono presenti più chiavi candidate.
+- In _Azienda Produttrice_ sono presenti più chiavi candidate.
 
 == Vincoli di Integrità
 
@@ -190,13 +199,14 @@ I seguenti vincoli di integrità devono essere aggiunti al precedente schema per
 garantire il significato atteso della base di dati.
 
 - Una Copia fisica di un Film noleggiata non può essere rinoleggiata prima che
-  venga restituita.
+  venga restituita (questo implica che gli intervalli temporali generati dalle
+  date di inizio e fine noleggio non si sovrappongano).
 - La Data di Inizio del Noleggio deve essere antecedente alla Data di Fine
   Noleggio.
 
-Nota:
-- Il ciclo 'Regista - Dirige - Film - Recita in - Attore' non è problematico,
-  perché un Attore può Recitare in un Film che dirige.
+Notiamo:
+- Il ciclo _'Regista - Dirige - Film - Recita in - Attore'_ non risulta problematico,
+  in quanto uno specifico attore può recitare in un film che dirige.
 - La durata massima del noleggio può essere maggiore della differenza tra la
   data di fine noleggio e la data di inizio noleggio, nel caso in cui la
   restituzione della copia fisica del film avvenga in ritardo.
@@ -221,6 +231,10 @@ Nota:
 )
 
 === Analisi delle Ridondanze <ridondanze>
+
+Nello schema E-R sono presenti due ridondanze: l'attributo derivato
+_Numero di Film Prodotti_ in _Azienda Produttrice_ e l'attributo derivato
+_Numero di Film Recitati_ in _Attore_. \
 
 Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
 
@@ -412,35 +426,45 @@ del costo in assenza di ridondanza, 2010 unità al giorno, si sceglie di
 
 === Eliminazione delle Generalizzazioni
 
-- Generalizzazione Persona: Siccome la generalizzazione è totale e sovrapposta,
+Nello schema E-R sono presenti due generalizzazioni:
+
+- *Generalizzazione _Persona_*: Siccome la generalizzazione è totale e sovrapposta,
   usiamo il metodo ibrido per la rimozione della generalizzazione, in cui si
-  mette ogni entità figlia in relazione con l'entità genitore. Le entità figlie
-  diventano entità deboli.
-  Aggiungiamo un vincolo di integrità per fare in modo che Persona si
-  specializzi obbligatoriamente in almeno uno tra Attore e Resista.
-- Generalizzazione Noleggio: Siccome le generalizzazione è totale e disgiunta,
+  pone ogni entità figlia in relazione con l'entità genitore. Le entità figlie
+  diventano quindi entità deboli. \
+  Risulta necessario aggiungere un vincolo di integrità per fare in modo che _Persona_ si
+  specializzi obbligatoriamente in _Attore_, _Resista_ o entrambi.
+
+- *Generalizzazione _Noleggio_*: Siccome le generalizzazione è totale e disgiunta,
   applichiamo la tecnica della rimozione dei figli.
-  Per discriminare tra Noleggio Corrente e Noleggio Passato utilizziamo
+  Per discriminare tra _Noleggio Corrente_ e _Noleggio Passato_ utilizziamo
   l'attributo "Data di fine", che ora diventa opzionale, come discriminante:
-  se è presente, il Noleggio è da considerarsi passato, altrimenti è corrente.
+  se è presente, il noleggio è da considerarsi passato, altrimenti è corrente.
 
 === Traduzione degli Attributi Multivalore
 
-Traduzione degli attributi "Frasi significative" e "Ruoli" della relazione
-"Recita in".
-- "Frasi Significative": aggiungiamo un'entità debole, in relazione $(0,N)$
-  con "Recita in", dato che una stessa frase significativa può essere detta da
-  attori diversi o in film diversi.
-- "Ruolo": aggiungiamo un'entità debole, in relazione $(1,1)$ con "Recita in".
+Si considerino gli attributi _Frasi significative_ e _Ruoli_ della relazione
+_Recita in_:
+- *_Frasi Significative_*: viene aggiunta un'entità debole in relazione $(1,1)$
+  con _Recita in_ (dal lato di _Recita in_).
+- *_Ruolo_*: aggiungiamo un'entità debole in relazione $(1,1)$ con _Recita in_
+  (dal lato di _Recita in_).
 
-Traduzione dell'attributo multivalore "Generi": aggiungiamo una entità (non
-debole) in relazione $(1,N)$ con "Film".
+Si consideri l'attributo multivalore *_Generi_* in _Film_: viene aggiunta un'
+entità (non debole) in relazione $(1,N)$ con _Film_.
 
 === Eliminazione della Relazione Quaternaria
 
-Siccome la relazione "Recita in", dopo la traduzione degli attributi multivalore,
-risulta quaternaria, è stata reificata in una nuova entità "Recitazione",
-debole rispetto a "Film" e "Attore".
+Siccome la relazione _Recita in_, a seguito della traduzione degli attributi
+multivalore, risulta quaternaria, è stata reificata in una nuova entità 
+*_Recitazione_*, debole rispetto a _Film_ e _Attore_.
+
+=== Aggiunta di Chiavi Primarie Surrogate
+
+Si fa notare come _Frase Significativa_ sia identificata da una complessa chiave
+composta contenente anche una stringa possibilmente molto lunga (la frase stessa),
+è allora giustificabile usare una chiave surrogata per identificarla, sebbene 
+non sia teoricamente necessario.
 
 === Schema E-R Ristrutturato
 
@@ -451,27 +475,25 @@ debole rispetto a "Film" e "Attore".
   ],
 )
 
-Vincoli di integrità:
+*Vincoli di integrità*:
 - Una copia fisica di un film noleggiata non può essere rinoleggiata prima che
-  venga restituita.
-- Una persona deve essere o un Attore, o un Regista, o entrambi.
+  venga restituita (questo implica che gli intervalli temporali generati dalle
+  date di inizio e fine noleggio non si sovrappongano).
 - La data di inizio del noleggio deve essere antecedente alla data di fine
   noleggio.
-
-Nota:
-- Siccome `Frase Significativa` è identificata da una complessa chiave composta
-  contenente anche una stringa possibilmente molto lunga, è giustificabile
-  usare una chiave surrogata per identificarla, sebbene non sia teoricamente
-  richiesto.
+- Una _Persona_ deve essere o un _Attore_, o un _Regista_, o entrambi.
 
 === Scelta degli Identificatori Primari
 
-- Per "Cliente Registrato" abbiamo due chiavi candidate: username e email.
-  Si sceglie username.
-- Per "Azienda Produttrice" abbiamo due chiavi candidate: nome e recapito.
-  Si sceglie nome.
+Si considerino le seguenti entità con più chiavi primarie candidate:
+
+- *_Cliente Registrato_*: vi sono due chiavi candidate: _username_ e _email_.
+  Viene scelto *_username_*.
+- *_Azienda Produttrice_*: abbiamo due chiavi candidate: _nome_ e _recapito_.
+  Viene scelto *_nome_*.
 
 == Traduzione nello Schema Relazionale <schema-relazionale>
+Segue la traduzione dello schema E-R ristrutturato allo schema relazionale:
 
 #let relation(name, attributes, ..constraints) = block(
   inset: (left: 0.5em),
@@ -586,83 +608,91 @@ rende necessaria l'aggiunta dei seguenti vincoli di integrità causati dalla
 perdita di espressività del modello relazionale, oltre ai vincoli già
 evidenziati inizialmente.
 
-I vincoli intra-relazionali, escludendo i vincoli di chiave primaria, di
-unicità, e di NOT NULL che sono stati già individuati in @schema-relazionale,
+I *vincoli intra-relazionali*, escludendo i vincoli di chiave primaria, di
+unicità, e di _NOT NULL_ che sono stati già individuati in @schema-relazionale,
 sono i seguenti:
-- Noleggio: DataDiFine > DataDiInizio if DataDiFine IS NOT NULL
-- Film: Durata > 0
+- _Noleggio_: _DataDiFine_ > _DataDiInizio_ if _DataDiFine_ IS NOT NULL
+- _Film_: _Durata_ > 0
 
-I vincoli inter-relazionali, escludendo i vincoli di chiave esterna che sono
-stati già individuati in @schema-relazionale, sono i seguenti; per ogni vincolo
-sono riportate le azioni che potrebbero violare l'integrità della base di dati:
+I *vincoli inter-relazionali*, escludendo i vincoli di chiave esterna che sono
+stati già individuati in @schema-relazionale, sono i seguenti. Notiamo che per 
+ogni vincolo sono riportate le azioni che potrebbero violare l'integrità della
+base di dati:
 - Un'azienda produttrice deve aver prodotto almeno un film.
-  - Inserimento di Azienda Produttrice
-  - Cancellazione di Film
-  - Modifica dell'attributo "AziendaProduttrice" di Film
+  - Inserimento in _Azienda Produttrice_
+  - Cancellazione in _Film_
+  - Modifica dell'attributo _AziendaProduttrice_ di Film
 - Un genere deve essere associato ad almeno un film
-  - Inserimento di Genere
-  - Cancellazione Film
-  - Modifica di "Genere" nella relazione "GenereDelFilm"
-  - Cancellazione di "Genere" nella relazione "GenereDelFilm"
+  - Inserimento in _Genere_
+  - Cancellazione in _Film_
+  - Modifica dell'attributo _Genere_ nella relazione _GenereDelFilm_
+  - Cancellazione dell'attributo _Genere_ nella relazione _GenereDelFilm_
 - Un film deve essere associato ad almeno un genere
-  - Inserimento Film
-  - Modifica di "Genere" nella relazione "GenereDelFilm"
-  - Cancellazione di "Genere" nella relazione "GenereDelFilm"
+  - Inserimento in _Film_
+  - Modifica di _Genere_ nella relazione _GenereDelFilm_
+  - Cancellazione di _Genere_ nella relazione _GenereDelFilm_
 - Un Film deve avere almeno un Regista
-  - Inserimento di Film
-  - Cancellazione di Regista
-  - Modifica di "RegistaDelFilm"
-  - Cancellazione di "RegistaDelFilm"
+  - Inserimento in _Film_
+  - Cancellazione in _Regista_
+  - Modifica di _RegistaDelFilm_
+  - Cancellazione di _RegistaDelFilm_
 - Una Recitazione deve prevedere almeno un Ruolo
-  - Cancellazione di Ruolo
-  - Inserimento di Recitazione
+  - Cancellazione in _Ruolo_
+  - Inserimento in _Recitazione_
 - Un Attore deve recitare in almeno un Film
-  - Inserimento di Attore
-  - Modifica di Recitazione
-  - Cancellazione di Recitazione
+  - Inserimento in _Attore_
+  - Modifica in _Recitazione_
+  - Cancellazione in _Recitazione_
 - Un Regista deve dirigere almeno un Film
-  - Inserimento Regista
-  - Cancellazione di Film
-  - Modifica di RegistaDelFilm
-  - Cancellazione di RegistaDelFilm
+  - Inserimento in _Regista_
+  - Cancellazione in _Film_
+  - Modifica in _RegistaDelFilm_
+  - Cancellazione di _RegistaDelFilm_
 - Una persona deve essere o un attore, o un regista, o
   entrambi:
-  - Inserimento di Persona
-  - Cancellazione di Attore
-  - Cancellazione di Regista
+  - Inserimento di _Persona_
+  - Cancellazione di _Attore_
+  - Cancellazione di _Regista_
 - Ci può essere al massimo un noleggio attivo
-  - Inserimento Noleggio
-  - Modifica Noleggio
+  - Inserimento in _Noleggio_
+  - Modifica in _Noleggio_
 - Gli intervalli generati dalle date di inizio e di fine noleggio, per ogni copia fisica di un film, non devono sovrapporsi
-  - Inserimento Noleggio
-  - Modifica Noleggio
-- Attributo derivato "Numero di Film Prodotti"
-  - Inserimento Film
-  - Modifica Film (attributo AziendaProduttrice)
-  - Cancellazione Film
-- Attributo derivato "Numero di Film Recitati"
-  - Inserimento Recitazione
-  - Modifica Recitazione
-  - Cancellazione Recitazione
+  - Inserimento in _Noleggio_
+  - Modifica in _Noleggio_
+- Attributo derivato _Numero di Film Prodotti_ in _Azienda Produttrice_
+  - Inserimento in _Film_
+  - Modifica di _AziendaProduttrice_ nella relazione _Film_
+  - Cancellazione in _Film_
 
 Notiamo che, per gli quanto riguardano gli intervalli generati dalle date
 relative ai noleggi, si ipotizza di lavorare con intervalli chiusi. Segue,
 quindi, che se un noleggio termina il giorno 10, un nuovo noleggio per la
 stessa copia fisica di un film può iniziare a partire dal giorno 11.
 
-Questi vincoli di integrità devono essere implementati utilizzando dei
-meccanismi esterni, dato che questi non possono essere garantiti nel modello
-relazionale.
-Per i vincoli intra-relazionali verranno usati dei controlli `CHECK`, mentre
-per i vincoli inter-relazionali dei _trigger_ o le clausole `ON DELETE` e
-`ON UPDATE` dei vincoli di chiave esterna.
-
 = Progettazione Fisica
 
-== Creazione dello Schema in SQL DDL
+== Creazione dello Schema in SQL DDL <sql-ddl>
 
 Viene riportato il codice di creazione delle relazioni definite in
 @schema-relazionale nel linguaggio Data Definition Language (DDL) di SQL.
+
+Notiamo subito che, per quanto riguarda l'implementazione dei vincoli di 
+integrità _intra-relazionali_, sono stati imposti dei vincoli `CHECK`.
+
+Successivamente, che per mantenere molti vincoli di integrità _inter-relazionali_, è stato
+optato per l'uso di clausole `ON DELETE NO ACTION` per la maggior parte delle
+chiavi esterne. \
+Sebbene l'utilizzo di `ON DELETE CASCADE` mantenga comunque l'integrità, si è
+preferito annullare le operazioni di rimozione, piuttosto che propagare le
+cancellazioni a cascata, eliminando grandi parti della base di dati 
+(si immagini per esempio la cancellazione di una casa produttrice, che 
+comporterebbe la cancellazione di tutti i film da essa).
+
+I rimanenti vincoli di integrità _inter-relazionali_, verranno invece 
+implementati tramite _trigger_ (@trigger).
+
+Infine, per quanto riguarda le operazioni di modifica, è stato invece 
+scelto l'utilizzo di `ON UPDATE CASCADE`, che non comporta problematiche.
 
 #let text = read("setup/create.sql")
 #show figure: set block(breakable: true)
@@ -673,8 +703,8 @@ Viene riportato il codice di creazione delle relazioni definite in
 
 = Implementazione
 
-Per una più semplice e veloce configurazione della base di dati è stato creato
-un comando unico per la creazione delle tabelle, dei triggers, del popolamento
+Per una più semplice e veloce configurazione della base di dati è stata creata
+un'unica lista di comandi per la creazione delle tabelle, dei triggers, del popolamento
 della base di dati, e dell'esecuzione delle interrogazioni.
 
 ```bash
@@ -694,12 +724,14 @@ psql -d industria_cinematografica -P pager \
     -c "\i setup/query_4.sql"
 ```
 
-In ogni caso, nelle sezioni successive questi passaggi sono descritti uno a
-uno.
+Al fine di porre ulteriore chiarezza, nelle sezioni successive vengono descritti 
+questi passaggi uno a uno.
 
 == Creazione della Base di Dati
 
-Per creare una nuova base di dati, eseguire il seguente comando da shell:
+Il seguente comando crea la nuova base di dati, sulla quale verranno eseguiti i
+seguenti comandi di creazione delle tabelle, dei trigger, del popolamento, e
+delle interrogazioni.
 
 ```bash
 psql -c "CREATE DATABASE industria_cinematografica;"
@@ -707,14 +739,14 @@ psql -c "CREATE DATABASE industria_cinematografica;"
 
 == Creazione delle Tabelle
 
-Per eseguire il codice SQL DDL di @sql-create, eseguire sulla base di dati
-appena creata:
+Una volta creata la base di dati, vengono create le tabelle, con i relativi 
+vincoli di integrità, attraverso il seguente comando:
 
 ```bash
 psql -d industria_cinematografica -c "\i setup/create.sql"
 ```
 
-== Implementazione dei Trigger
+== Implementazione dei Trigger <trigger>
 
 Vengono presentate le implementazioni dei seguenti trigger, scelti per le
 diverse tipologie di operazioni necessarie per mantenere i vincoli di
@@ -762,104 +794,119 @@ psql -d industria_cinematografica -c "\i setup/trigger_4.sql"
 
 == Popolamento della Base di Dati
 
-Per il popolamento della base di dati ci si è affidati ad uno script Python.
+Il popolamento della base di dati è stato effettuato attraverso uno script _Python_. \
 Per la generazione di un dataset realistico, si è utilizzata la libreria
-_faker_, capace di generare dei dati realistici di vari domini, come nomi di
-aziende, di persone, ecc.
-L'uso del linguaggio di programmazione Python insieme a _faker_ ci ha permesso
-di popolare la base di dati con dati piuttosto veritieri, anche se con volumi
-ridotti rispetto a quelli supposti in @tavola-volumi.
+_faker_, capace di generare dei dati verosimili di vari domini, come nomi di
+aziende, di persone, ecc... \
+L'utilizzo di questi strumenti ha permesso di popolare la base di dati, anche se
+con volumi ridotti rispetto a quelli proposti in @tavola-volumi.
 
-L'ordine degli inserimenti deve rispettare i vincoli definiti. In particolare
-sono state evidenziate queste dipendenze cicliche tra relazioni, causate dalla
-partecipazione obbligatoria delle relazioni coinvolte.
+È importante notache che l'ordine degli inserimenti deve rispettare i vincoli 
+definiti. In particolare sono state evidenziate queste dipendenze cicliche tra 
+relazioni, causate dalla partecipazione obbligatoria delle relazioni coinvolte. \
 L'inserimento deve dunque avvenire in una o più transazioni con il controllo
-dei vincoli posticipato (DEFERRED) al COMMIT.
-- Persona $<->$ Attore/Regista: una Persona deve essere o un Attore o un
-  Regista o entrambi; un Attore/Regista deve essere una Persona
-- Azienda $<->$ Film: un'Azienda deve avere prodotto almeno un Film; un Film
-  deve essere prodotto da un'Azienda
-- Film $<->$ Genere: un Film deve avere un Genere; un Genere deve essere
-  associato ad un Film
-- Film $<->$ Regista: un Film deve avere un Regista che lo dirige; un Regista
-  deve dirigere un Film
-- Attore $<->$ Recitazione $<->$ Ruolo: un Attore deve partecipare ad almeno
-  una Recitazione; la Recitazione si riferisce a un Attore e richiede almeno un
-  Ruolo.
+dei vincoli posticipato (`DEFERRED`) al `COMMIT`. \
+Segue la lista delle dipendenze problematiche:
+- _Persona $<->$ Attore/Regista_: una _Persona_ deve essere o un _Attore_ o un
+  _Regista_ o entrambi; un _Attore/Regista_ deve essere una Persona
+- _Azienda $<->$ Film_: un'_Azienda_ deve avere prodotto almeno un _Film_; un _Film_
+  deve essere prodotto da un'_Azienda_
+- _Film $<->$ Genere_: un _Film_ deve avere un _Genere_; un _Genere_ deve essere
+  associato ad un _Film_
+- _Film $<->$ Regista_: un _Film_ deve avere un _Regista_ che lo dirige; un _Regista_
+  deve dirigere un _Film_
+- _Attore $<->$ Recitazione $<->$ Ruolo_: un _Attore_ deve partecipare ad almeno
+  una _Recitazione_; la _Recitazione_ si riferisce a un _Attore_ e richiede almeno un
+  _Ruolo_.
 
-Allora, Azienda, Film, Generi, Registi (e Persone), RegistaDelFilm e
-GenereDelFilm devono essere inseriti in una transazione.
-Stessa cosa per Recitazioni, Attori (e Persone), e Ruoli.
+Notiamo infatti che tutti i dati relativi alle tabelle _Azienda_, _Film_,
+_Generi_, _Registi_ (e _Persone_), _RegistaDelFilm_ e _GenereDelFilm_ devono
+essere inseriti in una unica transazione. \
+Lo stesso vale per _Recitazioni_, _Attori_ (e _Persone_), e _Ruoli_.
 
-Inoltre, l'inserimento di Noleggio deve avvenire successivamente
-all'inserimento del relativo Cliente Registrato e della relativa Copia fisica
-di film (tra Cliente Registrato e Copia fisica di film non è necessario un
+Per quanto riguarda l'inserimento di _Noleggio_, quest'ultimo deve avvenire successivamente
+all'inserimento del relativo _Cliente Registrato_ e della relativa _Copia fisica_
+di film (tra _Cliente Registrato_ e _Copia fisica di film_ non è necessario un
 ordinamento).
 
-Infine, le Frasi Significative possono essere inserite in qualunque momento
-successivo all'inserimento della relativa Recitazione.
+Infine, le _Frasi Significative_ possono essere inserite in qualunque momento
+successivo all'inserimento della relativa _Recitazione_.
 
-In definitiva, lo script di inserimento `./seed/main.py`:
-1. Crea una transazione in cui inserisce Aziende, Film, Generi, Registi (e le
-   associate Persone), RegistaDelFilm e GenereDelFilm, con vincoli DEFERRED.
-2. Crea una seconda transazione in cui inserisce Recitazioni, Attori (e le
-   associate Persone), e Ruoli, con vincoli DEFERRED.
-3. Inserisce, in questo ordine, ClienteRegistrato, CopiaFisicaDiFilm e
-   Noleggio.
-4. Inserisce FrasiSignificative.
+In definitiva, lo script di inserimento segue il seguente ordine di inserimenti:
+1. Crea una transazione in cui inserisce _Aziende, Film, Generi, Registi_ (e le
+   associate _Persone_), _RegistaDelFilm_ e _GenereDelFilm_, con vincoli `DEFERRED`.
+2. Crea una seconda transazione in cui inserisce _Recitazioni_, _Attori_ (e le
+   associate _Persone_), e _Ruoli_, con vincoli `DEFERRED`.
+3. Inserisce, in questo ordine, _ClienteRegistrato_, _CopiaFisicaDiFilm_ e
+   _Noleggio_.
+4. Inserisce _FrasiSignificative_.
 
 Allo scopo di rendere la configurazione del database più semplice, lo script
 Python non inizializza la base di dati, ma crea un file `seed.sql` con le
 istruzioni di inserimento. In questo modo non è necessario installare le
 dipendenze richieste dallo script.
 
-== Interrogazioni <interrogazioni>
+== Interrogazioni ed Operazioni <interrogazioni>
 
-Le interrogazioni proposte di seguito fanno riferimento alle operazioni
-definite in @operazioni.
+Vengono proposte in seguito le interrogazioni ed operazioni in riferimento a
+quanto definito in @operazioni.
 
-=== Interrogazione 1
+=== Operazione 1
 
 #let text = read("setup/query_1.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
-=== Interrogazione 2
+=== Operazione 2
 
 #let text = read("setup/query_2.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
-=== Interrogazione 3
+=== Operazione 3
 
 #let text = read("setup/query_3.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
-=== Interrogazione 4
+=== Operazione 4
 
 #let text = read("setup/query_4.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
-// === Interrogazione 5
+=== Operazione 5
 
-// #let text = read("setup/query_5.sql")
-// #show figure: set block(breakable: true)
-// #raw(text, block: true, lang: "sql")
+L'operazione 5, è di inserimento. Notiamo che l'aggiornamento dell'attributo
+derivato _Numero di Film Prodotti_ in _Azienda Produttrice_ è gestito da un
+trigger, quindi non è necessario occuparsene nell'operazione di inserimento.
 
-=== Interrogazione 6
+#let text = read("setup/query_5.sql")
+#show figure: set block(breakable: true)
+#raw(text, block: true, lang: "sql")
 
-Usa l'attributo derivato, dato che la ridondanza è stata mantenuta.
+=== Operazione 6
+
+L'operazione 6, risulta estremamente semplice in quanto usa l'attributo derivato,
+dato che la ridondanza è stata mantenuta.
 
 #let text = read("setup/query_6.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
-=== Interrogazione 8
+=== Operazione 8
 
-Avendo eliminato l'attributo derivato, il numero di film deve essere calcolato.
+Avendo eliminato l'attributo derivato _numero di film recitati_ , il numero di
+film deve essere calcolato.
 
 #let text = read("setup/query_8.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
+
+
+= Conclusioni
+In questo progetto è stata progettata una base di dati per un'industria cinematografica, partendo da un modello concettuale, passando per un modello logico, fino ad arrivare alla progettazione fisica, con la creazione dello schema in SQL DDL, l'implementazione dei trigger, il popolamento della base di dati, e l'esecuzione di alcune interrogazioni. \
+
+Si è capito come progettare ed implementare una solida base di dati, in particolar modo, come strutturare il processo nelle sue varie fasi.
+
+Le competenze acquisite in questo progetto sono molteplici, e resteranno sicuramente utili per la progettazione di basi di dati in futuro, sia a livello accademico che professionale.
