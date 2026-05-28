@@ -923,7 +923,10 @@ L'operazione 9 é di cancellazione. Notiamo tuttavia che, a causa dell'utilizzo
 di `ON DELETE NO ACTION` per la maggior parte delle chiavi esterne, è necessario
 cancellare anche tutte le istanze correlate al film da cancellare. A causa delle
 dipendenze cicliche tra le relazioni, è necessario eseguire questa operazione in
-una unica transazione.
+una unica transazione. \
+Questa operazione di rimozione è implementata per puro scopo dimostrativo, in
+quanto nella vera base di dati, la cancellazione di entità dovrebe essere
+solo un caso eccezionale, e non una pratica comune.
 
 Come l'operazione 7, anche in questo caso tutti i parametri prefissati con `$` 
 sono da considerarsi come variabili, e dunque da sostituire con i valori di 
