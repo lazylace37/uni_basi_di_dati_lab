@@ -14,8 +14,8 @@
     title: "Progetto di Laboratorio di Basi di Dati",
     candidates: (
       [Gioele Vuaran\ #link("mailto:167222@spes.uniud.it")],
-      [Filippo Nassivera\ #link("mailto:@spes.uniud.it")],
-      [Mattia Rossetto\ #link("mailto:@spes.uniud.it")],
+      [Filippo Nassivera\ #link("mailto:165594@spes.uniud.it")],
+      [Mattia Rossetto\ #link("mailto:169423@spes.uniud.it")],
       [Francesco Viciguerra\ #link("mailto:@spes.uniud.it")],
     ),
     academic-year: "2025/2026",
