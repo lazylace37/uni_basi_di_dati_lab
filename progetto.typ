@@ -804,8 +804,8 @@ aziende, di persone, ecc... \
 L'utilizzo di questi strumenti ha permesso di popolare la base di dati, anche se
 con volumi ridotti rispetto a quelli proposti in @tavola-volumi.
 
-È importante notache che l'ordine degli inserimenti deve rispettare i vincoli 
-definiti. In particolare sono state evidenziate queste dipendenze cicliche tra 
+È importante notare che l'ordine degli inserimenti deve rispettare i vincoli
+definiti. In particolare sono state evidenziate queste dipendenze cicliche tra
 relazioni, causate dalla partecipazione obbligatoria delle relazioni coinvolte. \
 L'inserimento deve dunque avvenire in una o più transazioni con il controllo
 dei vincoli posticipato (`DEFERRED`) al `COMMIT`. \
@@ -914,7 +914,7 @@ input desiderati.
 
 === Operazione 8
 
-Avendo eliminato l'attributo derivato _numero di film recitati_ , il numero di
+Avendo eliminato l'attributo derivato _numero di film recitati_, il numero di
 film deve essere calcolato.
 
 #let text = read("setup/query_8.sql")
@@ -923,7 +923,7 @@ film deve essere calcolato.
 
 === Operazione 9
 
-L'operazione 9 é di cancellazione. Notiamo tuttavia che, a causa dell'utilizzo
+L'operazione 9 è di cancellazione. Notiamo tuttavia che, a causa dell'utilizzo
 di `ON DELETE NO ACTION` per la maggior parte delle chiavi esterne, è necessario
 cancellare anche tutte le istanze correlate al film da cancellare. A causa delle
 dipendenze cicliche tra le relazioni, è necessario eseguire questa operazione in
