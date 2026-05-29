@@ -1,12 +1,27 @@
 #set smartquote(enabled: true, alternative: true)
 
-#import "templ.typ": *
+#import "templ.typ": templ, thesis-front-page
+
 #show: templ.with(
   title: "Progetto di Laboratorio di Basi di Dati",
   author: ("Gioele Vuaran", "Filippo Nassivera", "Mattia Rossetto", "Francesco Viciguerra"),
   font-size: 11pt,
   font: "New Computer Modern",
+  front-page: thesis-front-page(
+    department: "Scienze Matematiche, Informatiche e Fisiche",
+    degree-type: "Corso di Laurea in",
+    course: "Informatica",
+    title: "Progetto di Laboratorio di Basi di Dati",
+    candidates: (
+      [Gioele Vuaran\ #link("mailto:167222@spes.uniud.it")],
+      [Filippo Nassivera\ #link("mailto:@spes.uniud.it")],
+      [Mattia Rossetto\ #link("mailto:@spes.uniud.it")],
+      [Francesco Viciguerra\ #link("mailto:@spes.uniud.it")],
+    ),
+    academic-year: "2025/2026",
+  )
 )
+
 #set table(stroke: .2mm + black)
 #show raw: set block(width: 100%, inset: 7pt, stroke: .2mm + black, radius: 1%)
 
