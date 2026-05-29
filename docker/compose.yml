@@ -1,0 +1,20 @@
+name: industria_cinematografica
+
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: industria_cinematografica
+    networks:
+      - industria_cinematografica_network
+    ports:
+      - "5432:5432"
+    workdir: /app
+    volumes:
+      - ./../setup:/app/setup
+      - ./../seed:/app/seed
+
+networks:
+  industria_cinematografica_network:

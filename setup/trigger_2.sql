@@ -1,4 +1,4 @@
-CREATE FUNCTION ControllaNoleggioAttivo() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION ControllaNoleggioAttivo() RETURNS trigger AS $$
 BEGIN
   IF EXISTS (
     SELECT *

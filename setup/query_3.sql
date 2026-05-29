@@ -1,4 +1,4 @@
-CREATE VIEW NumeroFilmPerRegista(NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm) AS
+CREATE OR REPLACE VIEW NumeroFilmPerRegista(NomeRegista, CognomeRegista, DataDiNascitaRegista, NumeroFilm) AS
 SELECT Regista.Nome, Regista.Cognome, Regista.DataDiNascita, COUNT(*)
 FROM Regista
 	JOIN RegistaDelFilm ON RegistaDelFilm.NomeRegista = Regista.Nome AND

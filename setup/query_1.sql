@@ -1,5 +1,5 @@
 -- Troviamo per ogni film il numero di attori che vi recitano. Notiamo che ogni istanza di recitazione corrisponde ad un ed un solo un attore. Non serve quindi effettuare join con attore
-CREATE VIEW NumeroAttoriPerFilm AS
+CREATE OR REPLACE VIEW NumeroAttoriPerFilm AS
   SELECT Film.Titolo AS TitoloFilm,
     Film.AnnoDiProduzione AS AnnoFilm,
     COUNT(Recitazione.NomeAttore) AS NumeroAttori

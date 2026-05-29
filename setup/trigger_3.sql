@@ -1,4 +1,4 @@
-CREATE FUNCTION AggiornaNumeroFilmProdotti() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION AggiornaNumeroFilmProdotti() RETURNS trigger AS $$
 BEGIN
   UPDATE AziendaProduttrice
   SET NumeroDiFilmProdotti = (
@@ -11,7 +11,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER Film_AggiornaNumeroFilmProdottiInRimozione
+CREATE OR REPLACE TRIGGER Film_AggiornaNumeroFilmProdottiInRimozione
 AFTER DELETE ON Film
 FOR EACH ROW
 EXECUTE FUNCTION AggiornaNumeroFilmProdotti();

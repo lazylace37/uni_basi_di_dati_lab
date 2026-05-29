@@ -1,2 +1,2 @@
-SELECT Nome, NumeroFilmProdotti
+SELECT Nome, NumeroDiFilmProdotti
 FROM AziendaProduttrice;

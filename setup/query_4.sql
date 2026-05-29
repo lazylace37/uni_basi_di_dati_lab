@@ -1,4 +1,4 @@
-CREATE VIEW Attore_AziendeProd AS
+CREATE OR REPLACE VIEW Attore_AziendeProd AS
   SELECT NomeAttore, CognomeAttore, DataNascitaAttore, AziendaProduttrice
   FROM   Recitazione JOIN Film
      ON  Recitazione.TitoloFilm = Film.Titolo

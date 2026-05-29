@@ -1,4 +1,4 @@
-CREATE FUNCTION ControllaSpecializzazione() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION ControllaSpecializzazione() RETURNS trigger AS $$
 BEGIN
   IF NOT EXISTS (
     SELECT *

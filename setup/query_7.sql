@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 INSERT INTO Recitazione VALUES (
         $TitoloFilm,
         $AnnoFilm,
@@ -24,3 +26,5 @@ VALUES (
         $DataDiNascitaAttore,
         $Frase
 );
+
+COMMIT;

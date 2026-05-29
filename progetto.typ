@@ -447,9 +447,9 @@ Nello schema E-R sono presenti due generalizzazioni:
 Si considerino gli attributi _Frasi significative_ e _Ruoli_ della relazione
 _Recita in_:
 - *_Frasi Significative_*: viene aggiunta un'entità debole in relazione $(1,1)$
-  con _Recita in_ (dal lato di _Recita in_).
-- *_Ruolo_*: aggiungiamo un'entità debole in relazione $(1,1)$ con _Recita in_
-  (dal lato di _Recita in_).
+  (nel lato _Frase Significativa_) con _Recita in_ .
+- *_Ruolo_*: aggiungiamo un'entità debole in relazione $(1,1)$ (nel lato _Ruolo_)
+  con _Recita in_
 
 Si consideri l'attributo multivalore *_Generi_* in _Film_: viene aggiunta un'
 entità (non debole) in relazione $(1,N)$ con _Film_.
@@ -892,6 +892,10 @@ trigger, quindi non è necessario occuparsene nell'operazione di inserimento.
 
 L'operazione 6, risulta estremamente semplice in quanto usa l'attributo derivato,
 dato che la ridondanza è stata mantenuta.
+
+Si nota che nel prototipo della base di dati è stato solo implementato il trigger
+per la rimozione di film. Segue che i valori ritornati dall'esecuzione della
+query nel prototipo non risulteranno aggiornati.
 
 #let text = read("setup/query_6.sql")
 #show figure: set block(breakable: true)
