@@ -724,7 +724,7 @@ psql -d industria_cinematografica -P pager \
     -c "\i setup/query_3.sql"   \
     -c "\i setup/query_4.sql"   \
     -c "\i setup/query_6.sql"   \
-    -c "\i setup/query_8.sql"   \
+    -c "\i setup/query_8.sql"
 ```
 
 Al fine di porre ulteriore chiarezza, nelle sezioni successive vengono descritti 
