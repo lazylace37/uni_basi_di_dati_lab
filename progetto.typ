@@ -3,7 +3,7 @@
 #import "templ.typ": *
 #show: templ.with(
   title: "Progetto di Laboratorio di Basi di Dati",
-  author: "",
+  author: ("Gioele Vuaran", "Filippo Nassivera", "Mattia Rossetto", "Francesco Viciguerra"),
   font-size: 11pt,
   font: "New Computer Modern",
 )

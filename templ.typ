@@ -48,7 +48,11 @@
   align(
     center,
     box(inset: (y: 10pt), {
-      text(11pt, weight: "semibold")[#author]
+      if type(author) == array {
+        text(11pt, weight: "semibold")[#author.join(linebreak())]
+      } else {
+        text(11pt, weight: "semibold")[#author]
+      }
     }),
   )
   v(6pt, weak: true)
