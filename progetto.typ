@@ -16,7 +16,7 @@
       [Gioele Vuaran\ #link("mailto:167222@spes.uniud.it")],
       [Filippo Nassivera\ #link("mailto:165594@spes.uniud.it")],
       [Mattia Rossetto\ #link("mailto:169423@spes.uniud.it")],
-      [Francesco Viciguerra\ #link("mailto:@spes.uniud.it")],
+      [Francesco Viciguerra\ #link("mailto:166896@spes.uniud.it")],
     ),
     academic-year: "2025/2026",
   )
@@ -65,6 +65,7 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
 )
 
 == Strutturazione dei Requisiti
+
 Si supponga di aver collezionato, dalla originale consegna,
 il seguente insieme di requisiti per la progettazione di una base di dati
 relazionale riguardante la gestione di informazioni
@@ -167,33 +168,32 @@ frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
 - _Operazione 3 (interrogazione)_: Ottieni il regista che ha diretto il numero massimo di film.
 - _Operazione 4 (interrogazione)_: Ottieni tutti gli attori che hanno recitato solo a film della
   stessa casa produttrice.
-- _Operazione 5_ (inserimento): Inserimento di nuovo film prodotto da una data casa
+- _Operazione 5 (inserimento)_: Inserimento di nuovo film prodotto da una data casa
   produttrice. Frequenza: 57 inserimenti al giorno #footnote[Dal sito web IMDB,
     risulta che nell'anno 2024 sono stati rilasciati 20844 film, ovvero circa 57
     film al giorno.]
-- _Operazione 6_ (interrogazione): Calcola il numero di film prodotti da una data casa
+- _Operazione 6 (interrogazione)_: Calcola il numero di film prodotti da una data casa
   produttrice. Frequenza: 50 richieste al giorno #footnote[Valore ipotetico -
     media rispetto a tutte le case produttrici.]
-- _Operazione 7_ (inserimento): Inserimento di una recitazione, con relativo ruolo e frase significativa. Frequenza: 570 inserimenti al giorno #footnote[Circa 10 volte il numero di Film].
-- _Operazione 8_ (interrogazione): Calcola il numero di film in cui un attore ha recitato. Frequenza: 100 richieste al giorno.
-- _Operazione 9_ (rimozione): Rimozione di un film. 
+- _Operazione 7 (inserimento)_: Inserimento di una recitazione, con relativo ruolo e frase significativa. Frequenza: 570 inserimenti al giorno #footnote[Circa 10 volte il numero di Film].
+- _Operazione 8 (interrogazione)_: Calcola il numero di film in cui un attore ha recitato. Frequenza: 100 richieste al giorno.
+- _Operazione 9 (rimozione)_: Rimozione di un film. 
 
 = Progettazione Concettuale
 
-Dall'analisi del testo e dei requisiti è stato creato il seguente schema E-R.
+Dall'analisi del testo e dei requisiti è stato prodotto lo schema
+Entità-Relazioni di @er.
 
-Notiamo subito che il metodo di progettazione scelto è stato l'utilizzo della 
-strategia _inside out_: lo schema è stato quindi definito partendo dall'entità _Film_
-e, poco a poco, è stato allargato comprendendo il resto dei concetti identificati. \
-È risultato infatti utile il Glossario, dal quale si è dedotto
-come _Film_ fosse l'entità principale da cui tutte le altre dipendessero.
+La strategia di progettazione scelta è stata la strategia _inside out_: lo
+schema è stato quindi definito partendo dall'entità _Film_ e, poco a poco, è
+stato allargato comprendendo il resto dei concetti identificati.
+È risultato utile per questo il Glossario, dal quale si è dedotto come _Film_
+fosse l'entità principale da cui tutte le altre dipendessero.
 
 #figure(
   image("ER-ER.png", format: "png", width: 95%),
-  caption: [
-    Schema Entità-Relazioni
-  ],
-)
+  caption: [Schema Entità-Relazioni],
+) <er>
 
 Seguono alcune osservazioni sullo schema E-R:
 - Per _Copia fisica di Film_, entità debole di _Film_, si è usato il pattern di
@@ -203,7 +203,7 @@ Seguono alcune osservazioni sullo schema E-R:
   come un attributo derivato (derivato dalla relazione Produce).
 - Per i noleggi si è usato il pattern per la storicizzazione, quindi
   specializzando il _Noleggio_ in _Noleggio Corrente_ e _Noleggio Passato_;
-  quest'ultimo ha l'attributo _Data di Fine_.
+  quest'ultimo possiede l'attributo _Data di Fine_.
 // Il noleggio è relativo ad una specifica copia fisica di film, dunque si è
 // supposto che l'attributo `Data di Inizio` fosse sufficiente ad identificare
 - In _Cliente Registrato_ sono presenti più chiavi candidate.
@@ -212,8 +212,7 @@ Seguono alcune osservazioni sullo schema E-R:
 == Vincoli di Integrità
 
 I seguenti vincoli di integrità devono essere aggiunti al precedente schema per
-garantire il significato atteso della base di dati.
-
+garantire il significato atteso della base di dati:
 - Una Copia fisica di un Film noleggiata non può essere rinoleggiata prima che
   venga restituita (questo implica che gli intervalli temporali generati dalle
   date di inizio e fine noleggio non si sovrappongano).
@@ -233,26 +232,34 @@ Notiamo:
 
 === Tavola dei Volumi <tavola-volumi>
 
-#table(
-  columns: 3,
-  table.header[*Concetto*][*Tipo*][*Volume*],
-  [Film],
-  [Entità],
-  [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
-  [Produce], [Relazione], [730000],
-  [AziendaProduttrice], [Entità], [10000],
+#align(
+  center,
+  figure(
+    table(
+      columns: 3,
+      align: left,
+      table.header[*Concetto*][*Tipo*][*Volume*],
+      [Film],
+      [Entità],
+      [730000 #footnote[Il sito web IMDB contiene 731089 film alla data di scrittura.]],
+      [Produce], [Relazione], [730000],
+      [AziendaProduttrice], [Entità], [10000],
 
-  [Recitazione], [Relazione], [7300000 #footnote[Circa 10 volte il numero di Film]],
-  [Attore], [Entità], [2920000 #footnote[Circa il 40% delle Recitazioni]],
+      [Recitazione], [Relazione], [7300000 #footnote[Circa 10 volte il numero di Film]],
+      [Attore], [Entità], [2920000 #footnote[Circa il 40% delle Recitazioni]],
+    ),
+  )
 )
 
 === Analisi delle Ridondanze <ridondanze>
 
 Nello schema E-R sono presenti due ridondanze: l'attributo derivato
 _Numero di Film Prodotti_ in _Azienda Produttrice_ e l'attributo derivato
-_Numero di Film Recitati_ in _Attore_. \
-
-Si assume un costo di un accesso in lettura di $1$ e in scrittura di $3$.
+_Numero di Film Recitati_ in _Attore_.
+Nelle seguenti sezioni viene fatta un'analisi delle due ridondanze per decidere
+se mantenerle o eliminarle.\
+Si assume un costo di un accesso in lettura di $1$ unità di costo, e in
+scrittura di $3$ unità di costo.
 
 ==== Ridondanza 1: Attributo derivato "Numero di Film Prodotti"
 
@@ -466,8 +473,8 @@ _Recita in_:
 - *_Ruolo_*: aggiungiamo un'entità debole in relazione $(1,1)$ (nel lato _Ruolo_)
   con _Recita in_
 
-Si consideri l'attributo multivalore *_Generi_* in _Film_: viene aggiunta un'
-entità (non debole) in relazione $(1,N)$ con _Film_.
+Si consideri l'attributo multivalore *_Generi_* in _Film_: viene aggiunta
+un'entità (non debole) in relazione $(1,N)$ con _Film_.
 
 === Eliminazione della Relazione Quaternaria
 
@@ -477,10 +484,10 @@ multivalore, risulta quaternaria, è stata reificata in una nuova entità
 
 === Aggiunta di Chiavi Primarie Surrogate
 
-Si fa notare come _Frase Significativa_ sia identificata da una complessa chiave
-composta contenente anche una stringa possibilmente molto lunga (la frase stessa),
-è allora giustificabile usare una chiave surrogata per identificarla, sebbene 
-non sia teoricamente necessario.
+Dal momento che l'entità _Frase Significativa_ è identificata da una complessa
+chiave composta contenente anche una stringa possibilmente molto lunga (la
+frase stessa), è allora giustificabile usare una chiave surrogata per
+identificarla, sebbene non sia teoricamente necessario.
 
 === Schema E-R Ristrutturato
 
@@ -617,12 +624,12 @@ Segue la traduzione dello schema E-R ristrutturato allo schema relazionale:
   [#fk {NomeAttore, CognomeAttore, DataNascitaAttore} $arrow.r$ {Attore.Nome, Attore.Cognome, Attore.DataDiNascita}],
 )
 
-=== Vincoli di Integrità
+=== Vincoli di Integrità <vin-int>
 
 La traduzione dallo schema concettuale allo schema logico (schema relazionale)
 rende necessaria l'aggiunta dei seguenti vincoli di integrità causati dalla
-perdita di espressività del modello relazionale, oltre ai vincoli già
-evidenziati inizialmente.
+perdita di espressività del modello relazionale, che vanno a integrare i
+vincoli già evidenziati inizialmente.
 
 I *vincoli intra-relazionali*, escludendo i vincoli di chiave primaria, di
 unicità, e di _NOT NULL_ che sono stati già individuati in @schema-relazionale,
@@ -631,9 +638,8 @@ sono i seguenti:
 - _Film_: _Durata_ > 0
 
 I *vincoli inter-relazionali*, escludendo i vincoli di chiave esterna che sono
-stati già individuati in @schema-relazionale, sono i seguenti. Notiamo che per 
-ogni vincolo sono riportate le azioni che potrebbero violare l'integrità della
-base di dati:
+stati già individuati in @schema-relazionale, sono i seguenti. Per ogni vincolo
+sono riportate le azioni che potrebbero violare l'integrità della base di dati:
 - Un'azienda produttrice deve aver prodotto almeno un film.
   - Inserimento in _Azienda Produttrice_
   - Cancellazione in _Film_
@@ -687,28 +693,26 @@ stessa copia fisica di un film può iniziare a partire dal giorno 11.
 
 = Progettazione Fisica
 
-== Creazione dello Schema in SQL DDL <sql-ddl>
+In questa sezione viene riportato il codice DDL (Data Definition Language) SQL
+per la creazione delle tabelle definite in @schema-relazionale.
 
-Viene riportato il codice di creazione delle relazioni definite in
-@schema-relazionale nel linguaggio Data Definition Language (DDL) di SQL.
+I vincoli di integrità _intra-relazionali_ sono stati implementati a livello di
+tabella tramite l'uso di clausole `CHECK`.
 
-Notiamo subito che, per quanto riguarda l'implementazione dei vincoli di 
-integrità _intra-relazionali_, sono stati imposti dei vincoli `CHECK`.
-
-Successivamente, che per mantenere molti vincoli di integrità _inter-relazionali_, è stato
-optato per l'uso di clausole `ON DELETE NO ACTION` per la maggior parte delle
-chiavi esterne. \
-Sebbene l'utilizzo di `ON DELETE CASCADE` mantenga comunque l'integrità, si è
-preferito annullare le operazioni di rimozione, piuttosto che propagare le
-cancellazioni a cascata, eliminando grandi parti della base di dati 
-(si immagini per esempio la cancellazione di una casa produttrice, che 
-comporterebbe la cancellazione di tutti i film da essa).
-
-I rimanenti vincoli di integrità _inter-relazionali_, verranno invece 
-implementati tramite _trigger_ (@trigger).
-
-Infine, per quanto riguarda le operazioni di modifica, è stato invece 
-scelto l'utilizzo di `ON UPDATE CASCADE`, che non comporta problematiche.
+Per quanto riguarda i vincoli _inter-relazionali_:
+- *Cancellazioni*: per la gestione delle chiavi esterne in fase di
+  cancellazione, si è optato per l'uso di clausole `ON DELETE NO ACTION` nella
+  maggior parte delle relazioni; sebbene l'utilizzo di `ON DELETE CASCADE`
+  mantenga comunque l'integrità della base di dati, si è preferito rifiutare le
+  operazioni di rimozione piuttosto che propagare le cancellazioni a cascata,
+  cosa che comporterebbe la rimozione di grandi parti della base di dati (si
+  immagini per esempio la cancellazione di una casa produttrice, che
+  comporterebbe la cancellazione di tutti i film da essa prodotti).
+- *Modifiche*: per le operazioni di aggiornamento invece è stato scelto
+  l'utilizzo di `ON UPDATE CASCADE`, che non comporta effetti collaterali
+  distruttivi.
+- *Vincoli generici*: i rimanenti vincoli di integrità _inter-relazionali_
+  sono stati invece implementati tramite _trigger_ (@trigger).
 
 #let text = read("setup/create.sql")
 #show figure: set block(breakable: true)
@@ -812,18 +816,26 @@ psql -d industria_cinematografica -c "\i setup/trigger_4.sql"
 
 == Popolamento della Base di Dati
 
-Il popolamento della base di dati è stato effettuato attraverso uno script _Python_. \
-Per la generazione di un dataset realistico, si è utilizzata la libreria
-_faker_, capace di generare dei dati verosimili di vari domini, come nomi di
-aziende, di persone, ecc... \
+Il popolamento della base di dati è stato effettuato attraverso uno script
+_Python_.
+Per la generazione di un dataset realistico si è utilizzata la libreria
+_faker_, capace di generare dati verosimili per vari domini, come nomi di
+aziende, di persone, ecc.
+L'obiettivo era quello di inizializzare la base di dati in modo completo, per
+far sì che le operazioni di @interrogazioni restituissero risultati
+significativi, e corretto, per rispettare i vincoli di integrità e quindi
+evitare errori da parte dei trigger.
 L'utilizzo di questi strumenti ha permesso di popolare la base di dati, anche se
 con volumi ridotti rispetto a quelli proposti in @tavola-volumi.
 
-È importante notare che l'ordine degli inserimenti deve rispettare i vincoli
-definiti. In particolare sono state evidenziate queste dipendenze cicliche tra
-relazioni, causate dalla partecipazione obbligatoria delle relazioni coinvolte. \
-L'inserimento deve dunque avvenire in una o più transazioni con il controllo
-dei vincoli posticipato (`DEFERRED`) al `COMMIT`. \
+È importante notare che l'ordine degli inserimenti deve rispettare i vincoli di
+integrità definiti.
+
+In particolare, sono state evidenziate alcune dipendenze cicliche tra
+relazioni, causate dalla partecipazione obbligatoria delle relazioni coinvolte.
+Per queste dipendenze cicliche, l'inserimento deve avvenire all'interno in una
+o più transazioni con il controllo dei vincoli posticipato (`DEFERRED`) al
+`COMMIT`.\
 Segue la lista delle dipendenze problematiche:
 - _Persona $<->$ Attore/Regista_: una _Persona_ deve essere o un _Attore_ o un
   _Regista_ o entrambi; un _Attore/Regista_ deve essere una Persona
@@ -837,18 +849,19 @@ Segue la lista delle dipendenze problematiche:
   una _Recitazione_; la _Recitazione_ si riferisce a un _Attore_ e richiede almeno un
   _Ruolo_.
 
-Notiamo infatti che tutti i dati relativi alle tabelle _Azienda_, _Film_,
-_Generi_, _Registi_ (e _Persone_), _RegistaDelFilm_ e _GenereDelFilm_ devono
-essere inseriti in una unica transazione. \
+Di conseguenza, tutti i dati relativi alle tabelle _Azienda_, _Film_, _Generi_,
+_Registi_ (e _Persone_), _RegistaDelFilm_ e _GenereDelFilm_ devono essere
+inseriti in un'unica transazione.\
 Lo stesso vale per _Recitazioni_, _Attori_ (e _Persone_), e _Ruoli_.
 
-Per quanto riguarda l'inserimento di _Noleggio_, quest'ultimo deve avvenire successivamente
-all'inserimento del relativo _Cliente Registrato_ e della relativa _Copia fisica_
-di film (tra _Cliente Registrato_ e _Copia fisica di film_ non è necessario un
-ordinamento).
-
-Infine, le _Frasi Significative_ possono essere inserite in qualunque momento
-successivo all'inserimento della relativa _Recitazione_.
+Per le rimanenti relazioni non è necessario posticipare il controllo dei
+vincoli, ma i seguenti ordini di inserimento devono essere rispettati:
+- _Noleggio_: l'inserimento deve avvenire successivamente all'inserimento del
+  relativo _Cliente Registrato_ e della relativa _Copia fisica di film_ (tra
+  _Cliente Registrato_ e _Copia fisica di film_ non è necessario un
+  ordinamento);
+- _Frasi Significative_: possono essere inserite in qualunque momento
+  successivo all'inserimento della relativa _Recitazione_.
 
 In definitiva, lo script di inserimento segue il seguente ordine di inserimenti:
 1. Crea una transazione in cui inserisce _Aziende, Film, Generi, Registi_ (e le
@@ -944,8 +957,8 @@ cancellare anche tutte le istanze correlate al film da cancellare. A causa delle
 dipendenze cicliche tra le relazioni, è necessario eseguire questa operazione in
 una unica transazione. \
 Questa operazione di rimozione è implementata per puro scopo dimostrativo, in
-quanto nella vera base di dati, la cancellazione di entità dovrebe essere
-solo un caso eccezionale, e non una pratica comune.
+quanto nella vera base di dati, la cancellazione di entità dovrebbe essere solo
+un caso eccezionale, e non una pratica comune.
 
 Come l'operazione 7, anche in questo caso tutti i parametri prefissati con `$` 
 sono da considerarsi come variabili, e dunque da sostituire con i valori di 
