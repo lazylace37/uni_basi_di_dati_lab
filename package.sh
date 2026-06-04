@@ -4,6 +4,7 @@ set -e
 
 typst compile progetto.typ
 
+rm -f release.zip
 rm -rf release
 mkdir release
 

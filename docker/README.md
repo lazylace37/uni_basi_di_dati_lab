@@ -11,7 +11,7 @@ Login into the postgres console:
 ./enter_psql.sh
 ```
 
-Inside the postgres console, create the database and run queries:
+Inside the postgres console, create the database and run the queries:
 ```sh
 \i db/create.sql
 \i db/trigger_1.sql
