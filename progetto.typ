@@ -851,8 +851,9 @@ _faker_, capace di generare dati verosimili per vari domini, come nomi di
 aziende, di persone, ecc.
 L'obiettivo era quello di inizializzare la base di dati in modo completo, per
 far sì che le operazioni di @interrogazioni restituissero risultati
-significativi, e corretti, per rispettare i vincoli di integrità e quindi
+significativi e corretti, rispettando i vincoli di integrità e quindi
 evitare errori da parte dei trigger.
+
 L'utilizzo di questi strumenti ha permesso di popolare la base di dati, anche se
 con volumi ridotti rispetto a quelli proposti in @tavola-volumi.
 
@@ -904,6 +905,9 @@ Allo scopo di rendere la configurazione del database più semplice, lo script
 Python non inizializza la base di dati direttamente, ma crea un file `seed.sql` con le
 istruzioni di inserimento. In questo modo non è necessario installare le
 dipendenze richieste dallo script.
+
+Lo script viene fornito per completezza, tuttavia, è consigliato usare il file
+`seed.sql`, come suggerito nelle istruzioni precedenti.
 
 == Interrogazioni ed Operazioni <interrogazioni>
 
