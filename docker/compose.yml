@@ -11,10 +11,8 @@ services:
       - industria_cinematografica_network
     ports:
       - "5432:5432"
-    workdir: /app
     volumes:
-      - ./../setup:/app/setup
-      - ./../seed:/app/seed
+      - ./../db:/db
 
 networks:
   industria_cinematografica_network:

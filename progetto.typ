@@ -727,7 +727,7 @@ Per quanto riguarda i vincoli _inter-relazionali_:
 - *Vincoli generici*: i rimanenti vincoli di integrità _inter-relazionali_
   sono stati invece implementati tramite _trigger_ (@trigger).
 
-#let text = read("setup/create.sql")
+#let text = read("db/create.sql")
 #show figure: set block(breakable: true)
 #figure(
   raw(text, block: true, lang: "sql"),
@@ -745,19 +745,31 @@ psql -d $USER \
     -c "CREATE DATABASE industria_cinematografica;"
 
 psql -d industria_cinematografica -P pager \
-    -c "\i setup/create.sql"    \
-    -c "\i setup/trigger_1.sql" \
-    -c "\i setup/trigger_2.sql" \
-    -c "\i setup/trigger_3.sql" \
-    -c "\i setup/trigger_4.sql" \
-    -c "\i seed/seed.sql"       \
-    -c "\i setup/query_1.sql"   \
-    -c "\i setup/query_2.sql"   \
-    -c "\i setup/query_3.sql"   \
-    -c "\i setup/query_4.sql"   \
-    -c "\i setup/query_6.sql"   \
-    -c "\i setup/query_8.sql"
+    -c "\i db/create.sql"    \
+    -c "\i db/trigger_1.sql" \
+    -c "\i db/trigger_2.sql" \
+    -c "\i db/trigger_3.sql" \
+    -c "\i db/trigger_4.sql" \
+    -c "\i db/trigger_5.sql" \
+    -c "\i db/seed.sql"       \
+    -c "\i db/operation_1__query_1.sql"   \
+    -c "\i db/operation_2__query_2.sql"   \
+    -c "\i db/operation_3__query_3.sql"   \
+    -c "\i db/operation_4__query_4.sql"   \
+    -c "\i db/operation_6__query_5.sql"   \
+    -c "\i db/operation_8__query_6.sql"
 ```
+
+Nel caso si volesse eseguire l'istanziazione delle operazioni di inserimento e di
+cancellazione con parametri di esempio, è possibile eseguire i seguenti comandi:
+```bash
+psql -d industria_cinematografica -P pager \
+    -c "\i db/operation_5__insertion_1_instanced.sql" \
+    -c "\i db/operation_7__insertion_2_instanced.sql" \
+    -c "\i db/operation_9__deletion_1_instanced.sql" \
+```
+Si nota che l'esecuzione ripetuta di tali comandi porta ad un fallimento, data la
+natura statica dei dati d'esempio inseriti o cancellati.
 
 Al fine di porre ulteriore chiarezza, nelle sezioni successive vengono descritti 
 questi passaggi uno a uno.
@@ -778,7 +790,7 @@ Una volta creata la base di dati, vengono create le tabelle, con i relativi
 vincoli di integrità, attraverso il seguente comando:
 
 ```bash
-psql -d industria_cinematografica -c "\i setup/create.sql"
+psql -d industria_cinematografica -c "\i db/create.sql"
 ```
 
 == Implementazione dei Trigger <trigger>
@@ -797,33 +809,36 @@ integrità:
 
 Per il setup dei triggers, eseguire:
 ```bash
-psql -d industria_cinematografica -c "\i setup/trigger_1.sql"
-psql -d industria_cinematografica -c "\i setup/trigger_2.sql"
-psql -d industria_cinematografica -c "\i setup/trigger_3.sql"
-psql -d industria_cinematografica -c "\i setup/trigger_4.sql"
+psql -d industria_cinematografica -c "\i db/trigger_1.sql"
+psql -d industria_cinematografica -c "\i db/trigger_2.sql"
+psql -d industria_cinematografica -c "\i db/trigger_3.sql"
+psql -d industria_cinematografica -c "\i db/trigger_4.sql"
+psql -d industria_cinematografica -c "\i db/trigger_5.sql"
 ```
+
+Si nota che è stato implementato anche un quinto trigger, relativo all'aggiornamento in inserimento dell'attributo derivato _"Numero di Film Prodotti"_. Non viene riportato per motivi di brevità.
 
 === Trigger 1: Una persona deve essere o un attore, o un regista, o entrambi
 
-#let text = read("setup/trigger_1.sql")
+#let text = read("db/trigger_1.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Trigger 2: Ci può essere al massimo un noleggio attivo
 
-#let text = read("setup/trigger_2.sql")
+#let text = read("db/trigger_2.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Trigger 3: Attributo derivato "Numero di Film Prodotti"
 
-#let text = read("setup/trigger_3.sql")
+#let text = read("db/trigger_3.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Trigger 4: Intervalli di noleggio non sovrapposti
 
-#let text = read("setup/trigger_4.sql")
+#let text = read("db/trigger_4.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
@@ -895,27 +910,30 @@ dipendenze richieste dallo script.
 Vengono proposte in seguito le interrogazioni ed operazioni in riferimento a
 quanto definito in @operazioni.
 
+Notiamo che, per quanto riguarda le operazioni di inserimento e di cancellazione, tutti i parametri prefissati con `$` sono da considerarsi come variabili, e dunque da sostituire con i valori di input desiderati.
+Per ogni operazione utilizzante questi parametri, è possibile trovare un esempio con valori di input specifici nei file terminanti con `_instanced` (per esempio, _operation\_5\_\_insertion_1_instanced.sql_).
+
 === Operazione 1
 
-#let text = read("setup/query_1.sql")
+#let text = read("db/operation_1__query_1.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Operazione 2
 
-#let text = read("setup/query_2.sql")
+#let text = read("db/operation_2__query_2.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Operazione 3
 
-#let text = read("setup/query_3.sql")
+#let text = read("db/operation_3__query_3.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Operazione 4
 
-#let text = read("setup/query_4.sql")
+#let text = read("db/operation_4__query_4.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
@@ -925,7 +943,7 @@ L'operazione 5, è di inserimento. Notiamo che l'aggiornamento dell'attributo
 derivato _Numero di Film Prodotti_ in _Azienda Produttrice_ è gestito da un
 trigger, quindi non è necessario occuparsene nell'operazione di inserimento.
 
-#let text = read("setup/query_5.sql")
+#let text = read("db/operation_5__insertion_1.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
@@ -938,17 +956,13 @@ Si nota che nel prototipo della base di dati è stato solo implementato il trigg
 per la rimozione di film. Segue che i valori ritornati dall'esecuzione della
 query nel prototipo non risulteranno aggiornati.
 
-#let text = read("setup/query_6.sql")
+#let text = read("db/operation_6__query_5.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
 === Operazione 7
 
-L'operazione 7, è di inserimento. Si nota che tutti i parametri prefissati con 
-`$` sono da considerarsi come variabili, e dunque da sostituire con i valori di
-input desiderati.
-
-#let text = read("setup/query_7.sql")
+#let text = read("db/operation_7__insertion_2.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
@@ -958,7 +972,7 @@ input desiderati.
 Avendo eliminato l'attributo derivato _numero di film recitati_, il numero di
 film deve essere calcolato.
 
-#let text = read("setup/query_8.sql")
+#let text = read("db/operation_8__query_6.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 
@@ -973,11 +987,7 @@ Questa operazione di rimozione è implementata per puro scopo dimostrativo, in
 quanto nella vera base di dati, la cancellazione di entità dovrebbe essere solo
 un caso eccezionale, e non una pratica comune.
 
-Come l'operazione 7, anche in questo caso tutti i parametri prefissati con `$` 
-sono da considerarsi come variabili, e dunque da sostituire con i valori di 
-input desiderati.
-
-#let text = read("setup/query_9.sql")
+#let text = read("db/operation_9__deletion_1.sql")
 #show figure: set block(breakable: true)
 #raw(text, block: true, lang: "sql")
 

@@ -2,15 +2,15 @@ BEGIN TRANSACTION;
 
 INSERT INTO Film VALUES (
         $TitoloFilm,
-        2024,
-        120,
+        $AnnoFilm,
+        $DurataFilm,
         $TramaFilm,
         $AziendaProduttrice
 );
 
 INSERT INTO RegistaDelFilm VALUES (
         $TitoloFilm,
-        2024,
+        $AnnoFilm,
         $NomeRegista,
         $CognomeRegista,
         $DataDiNascitaRegista

@@ -32,10 +32,10 @@ def write_to_file(f, cur, query, vars=None):
     f.write(raw_sql.strip() + ";\n")
 
 def seed_database():
-    with open("seed.sql", "w") as f:
+    with open("../db/seed.sql", "w") as f:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-        print("Connected to PostgreSQL. Starting data insertion...")
+        # print("Connected to PostgreSQL. Starting data insertion...")
 
         ## Persona, Attore e Regista
         n_registi = int(NUM_PERSONE * 0.2)
@@ -219,6 +219,9 @@ def seed_database():
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, (id_frase, titolo, anno, nome_a, cognome_a, nascita_a, frase))
                 id_frase += 1
+
+        # Aggiornamento del id per le frasi significative
+        write_to_file(f, cur, "SELECT setval(pg_get_serial_sequence('FraseSignificativa','id'), COALESCE((SELECT MAX(id) FROM FraseSignificativa),0))")
 
 
 if __name__ == "__main__":

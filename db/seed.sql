@@ -2628,3 +2628,5 @@ INSERT INTO FraseSignificativa (ID, TitoloFilm, AnnoFilm, NomeAttore, CognomeAtt
                     VALUES (73, 'Distributed 5thgeneration alliance', '2013', 'Omar', 'Clayton', '1939-11-13'::date, 'Other officer region manager energy situation.');
 INSERT INTO FraseSignificativa (ID, TitoloFilm, AnnoFilm, NomeAttore, CognomeAttore, DataNascitaAttore, Frase)
                     VALUES (74, 'Distributed 5thgeneration alliance', '2013', 'Omar', 'Clayton', '1939-11-13'::date, 'Close south daughter section indicate Republican.');
+
+SELECT setval(pg_get_serial_sequence('FraseSignificativa','id'), COALESCE((SELECT MAX(id) FROM FraseSignificativa),0));

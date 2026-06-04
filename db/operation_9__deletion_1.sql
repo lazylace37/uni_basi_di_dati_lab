@@ -25,12 +25,6 @@ WHERE
         AnnoDiProduzioneFilm = $AnnoFilm;
 
 DELETE
-FROM CopiaFisicaDiFilm
-WHERE
-        TitoloFilm = $TitoloFilm AND
-        AnnoDiProduzioneFilm = $AnnoFilm;
-
-DELETE
 FROM RegistaDelFilm
 WHERE
         TitoloFilm = $TitoloFilm AND
@@ -38,6 +32,12 @@ WHERE
 
 DELETE
 FROM Noleggio
+WHERE
+        TitoloFilm = $TitoloFilm AND
+        AnnoFilm = $AnnoFilm;
+
+DELETE
+FROM CopiaFisicaDiFilm
 WHERE
         TitoloFilm = $TitoloFilm AND
         AnnoFilm = $AnnoFilm;
