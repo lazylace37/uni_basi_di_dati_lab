@@ -10,7 +10,7 @@ services:
     networks:
       - industria_cinematografica_network
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - ./../db:/db
 

@@ -734,7 +734,7 @@ Per quanto riguarda i vincoli _inter-relazionali_:
   caption: [Creazione dello Schema],
 ) <sql-create>
 
-= Implementazione
+= Implementazione <implementazione>
 
 Per una più semplice e veloce configurazione della base di dati è stata creata
 un'unica lista di comandi per la creazione delle tabelle, dei triggers, del popolamento
@@ -766,13 +766,20 @@ cancellazione con parametri di esempio, è possibile eseguire i seguenti comandi
 psql -d industria_cinematografica -P pager \
     -c "\i db/operation_5__insertion_1_instanced.sql" \
     -c "\i db/operation_7__insertion_2_instanced.sql" \
-    -c "\i db/operation_9__deletion_1_instanced.sql" \
+    -c "\i db/operation_9__deletion_1_instanced.sql"
 ```
 Si nota che l'esecuzione ripetuta di tali comandi porta ad un fallimento, data la
 natura statica dei dati d'esempio inseriti o cancellati.
 
 Al fine di porre ulteriore chiarezza, nelle sezioni successive vengono descritti 
 questi passaggi uno a uno.
+
+=== Docker
+In alternativa al metodo di configurazione tradizionale viene
+anche proposto un metodo di configurazione basato su Docker, quindi più indipendente dall'ambiente di esecuzione.
+
+Le istruzioni per la configurazione della base di dati tramite Docker non vengono riportate in questo documento, ma sono reperibili nel file _README.md_ nella cartella _docker_.
+
 
 == Creazione della Base di Dati
 

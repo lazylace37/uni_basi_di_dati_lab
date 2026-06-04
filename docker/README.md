@@ -29,7 +29,7 @@ Inside the postgres console, create the database and run queries:
 
 \i db/operation_5__insertion_1_instanced.sql
 \i db/operation_7__insertion_2_instanced.sql
-\i db/operation_9__deletion_1_instanced.sql"
+\i db/operation_9__deletion_1_instanced.sql
 ```
 
 Shutdown:
