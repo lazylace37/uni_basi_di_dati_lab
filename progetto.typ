@@ -154,6 +154,16 @@ Si supponga di aver collezionato anche gli ulteriori requisiti, in aggiunta alla
   ),
 )
 
+=== Ambiguità
+La consegna risulta estremamente chiara, avendo quindi solo un minimo numero di
+ambiguità.
+
+È necessaria tuttavia una precisazione sul significato di _Ruolo_: come ruolo si
+intende il personaggio interpretato da un determinato attore nel film. Notiamo
+anche che tale personaggio viene considerato come specifico al film (ad esempio
+il ruolo di _Cenerentola_ di un film risulterà differente dello stesso ruolo nel
+suo remake).
+
 == Operazioni <operazioni>
 
 Le Operazioni 1-4 sono state definite per poter prepare delle interrogazioni,
@@ -200,7 +210,9 @@ Seguono alcune osservazioni sullo schema E-R:
   progettazione _istanza di_: una copia fisica ha un numero che la identifica
   tra tutte le copie fisiche di un determinato film.
 - In _Azienda Produttrice_ viene mantenuto il numero di film da essa prodotti
-  come un attributo derivato (derivato dalla relazione Produce).
+  come un attributo derivato (derivato dalla relazione _Produce_).
+- In _Attore_ viene mantenuto il numero di film in cui ha recitato come un
+  attributo derivato (derivato dalla relazione _Recita in_)
 - Per i noleggi si è usato il pattern per la storicizzazione, quindi
   specializzando il _Noleggio_ in _Noleggio Corrente_ e _Noleggio Passato_;
   quest'ultimo possiede l'attributo _Data di Fine_.
@@ -459,7 +471,8 @@ Nello schema E-R sono presenti due generalizzazioni:
   specializzi obbligatoriamente in _Attore_, _Resista_ o entrambi.
 
 - *Generalizzazione _Noleggio_*: Siccome le generalizzazione è totale e disgiunta,
-  applichiamo la tecnica della rimozione dei figli.
+  applichiamo la tecnica della rimozione dei figli, spostando tutti gli attributi
+  nella classe genitore. \
   Per discriminare tra _Noleggio Corrente_ e _Noleggio Passato_ utilizziamo
   l'attributo "Data di fine", che ora diventa opzionale, come discriminante:
   se è presente, il noleggio è da considerarsi passato, altrimenti è corrente.
@@ -823,7 +836,7 @@ _faker_, capace di generare dati verosimili per vari domini, come nomi di
 aziende, di persone, ecc.
 L'obiettivo era quello di inizializzare la base di dati in modo completo, per
 far sì che le operazioni di @interrogazioni restituissero risultati
-significativi, e corretto, per rispettare i vincoli di integrità e quindi
+significativi, e corretti, per rispettare i vincoli di integrità e quindi
 evitare errori da parte dei trigger.
 L'utilizzo di questi strumenti ha permesso di popolare la base di dati, anche se
 con volumi ridotti rispetto a quelli proposti in @tavola-volumi.
@@ -873,7 +886,7 @@ In definitiva, lo script di inserimento segue il seguente ordine di inserimenti:
 4. Inserisce _FrasiSignificative_.
 
 Allo scopo di rendere la configurazione del database più semplice, lo script
-Python non inizializza la base di dati, ma crea un file `seed.sql` con le
+Python non inizializza la base di dati direttamente, ma crea un file `seed.sql` con le
 istruzioni di inserimento. In questo modo non è necessario installare le
 dipendenze richieste dallo script.
 
@@ -969,7 +982,7 @@ input desiderati.
 #raw(text, block: true, lang: "sql")
 
 = Conclusioni
-In questo progetto è stata progettata una base di dati per un'industria cinematografica, partendo da un modello concettuale, passando per un modello logico, fino ad arrivare alla progettazione fisica, con la creazione dello schema in SQL DDL, l'implementazione dei trigger, il popolamento della base di dati, e l'esecuzione di alcune interrogazioni. \
+In questo progetto è stata progettata una base di dati per un'industria cinematografica, partendo da un modello concettuale, passando per un modello logico, fino ad arrivare alla progettazione fisica, con la creazione dello schema in SQL DDL, l'implementazione dei trigger, il popolamento della base di dati e l'esecuzione di alcune interrogazioni. \
 
 Si è capito come progettare ed implementare una solida base di dati, in particolar modo, come strutturare il processo nelle sue varie fasi.
 
