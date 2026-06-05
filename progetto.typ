@@ -737,18 +737,18 @@ psql -d $USER \
     -c "CREATE DATABASE industria_cinematografica;"
 
 psql -d industria_cinematografica -P pager \
-    -c "\i db/create.sql"    \
+    -c "\i db/create.sql" \
     -c "\i db/trigger_1.sql" \
     -c "\i db/trigger_2.sql" \
     -c "\i db/trigger_3.sql" \
     -c "\i db/trigger_4.sql" \
     -c "\i db/trigger_5.sql" \
-    -c "\i db/seed.sql"       \
-    -c "\i db/operation_1__query_1.sql"   \
-    -c "\i db/operation_2__query_2.sql"   \
-    -c "\i db/operation_3__query_3.sql"   \
-    -c "\i db/operation_4__query_4.sql"   \
-    -c "\i db/operation_6__query_5.sql"   \
+    -c "\i db/seed.sql" \
+    -c "\i db/operation_1__query_1.sql" \
+    -c "\i db/operation_2__query_2.sql" \
+    -c "\i db/operation_3__query_3.sql" \
+    -c "\i db/operation_4__query_4.sql" \
+    -c "\i db/operation_6__query_5.sql" \
     -c "\i db/operation_8__query_6.sql"
 ```
 
