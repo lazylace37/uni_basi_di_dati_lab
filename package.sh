@@ -4,18 +4,18 @@ set -e
 
 typst compile progetto.typ
 
-rm -f release.zip
-rm -rf release
-mkdir release
+rm -f db_lab_gruppo_7.zip
+rm -rf db_lab_gruppo_7
+mkdir db_lab_gruppo_7
 
-cp -r db release/db
-cp -r docker release/docker
+cp -r db db_lab_gruppo_7/db
+cp -r docker db_lab_gruppo_7/docker
 
-mkdir release/seed
-cp seed/main.py release/seed/main.py
-cp seed/pyproject.toml release/seed/pyproject.toml
-cp seed/README.md release/seed/README.md
+mkdir db_lab_gruppo_7/seed
+cp seed/main.py db_lab_gruppo_7/seed/main.py
+cp seed/pyproject.toml db_lab_gruppo_7/seed/pyproject.toml
+cp seed/README.md db_lab_gruppo_7/seed/README.md
 
-cp progetto.pdf release/progetto.pdf
+cp progetto.pdf db_lab_gruppo_7/progetto.pdf
 
-zip -r release.zip release
+zip -r db_lab_gruppo_7.zip db_lab_gruppo_7
