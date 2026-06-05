@@ -41,25 +41,15 @@ eventuali sinonimi e collegamenti ad altri termini individuati.
     align: left,
     columns: (auto, auto, auto, auto),
     table.header[*Termine*][*Descrizione*][*Sinonimi*][*Collegamenti*],
-    [Film],
-    [],
-    [],
-    [Attori,\ Azienda Produttrice,\ Registi,\ Frasi Significative],
-
+    [Film], [], [], [Attori,\ Azienda Produttrice,\ Registi,\ Frasi Significative],
     [Attore], [Recita in uno o più film], [Autore], [Film],
-    [Regista],
-    [Dirige almeno un film, e può recitare in uno o più film],
-    [],
-    [Film],
-
+    [Regista], [Dirige almeno un film, e può recitare in uno o più film], [], [Film],
     [Copia fisica\ di un Film\*], [], [], [Film,\ Cliente],
     [Azienda\ Produttrice], [Produce uno o più film], [], [Film],
-    [Cliente\*],
-    [Noleggia una o più copie fisiche di film],
-    [Cliente Registrato],
-    [Film],
-
     [Ruolo], [Svolto da un attore in un film, indica il personaggio interpretato _(es. Cenerentola)_], [], [Attore,\ Film],
+
+    [Cliente\*], [Noleggia una o più copie fisiche di film], [Cliente Registrato], [Film],
+    [Noleggio\*], [], [], [Cliente,\ Copia fisica di Film]
   ),
   caption: [Glossario (\* aggiunta alla consegna)],
 )
@@ -178,7 +168,7 @@ frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
 - _Operazione 3 (interrogazione)_: Ottieni il regista che ha diretto il numero massimo di film.
 - _Operazione 4 (interrogazione)_: Ottieni tutti gli attori che hanno recitato solo a film della
   stessa casa produttrice.
-- _Operazione 5 (inserimento)_: Inserimento di nuovo film prodotto da una data casa
+- _Operazione 5 (inserimento)_: Inserimento di un nuovo film prodotto da una data casa
   produttrice. Frequenza: 57 inserimenti al giorno #footnote[Dal sito web IMDB,
     risulta che nell'anno 2024 sono stati rilasciati 20844 film, ovvero circa 57
     film al giorno.]
@@ -187,7 +177,7 @@ frequenze per l'analisi dei costi e delle ridondanze, sviluppate in
     media rispetto a tutte le case produttrici.]
 - _Operazione 7 (inserimento)_: Inserimento di una recitazione, con relativo ruolo e frase significativa. Frequenza: 570 inserimenti al giorno #footnote[Circa 10 volte il numero di Film].
 - _Operazione 8 (interrogazione)_: Calcola il numero di film in cui un attore ha recitato. Frequenza: 100 richieste al giorno.
-- _Operazione 9 (rimozione)_: Rimozione di un film. 
+- _Operazione 9 (cancellazione)_: Cancellazione di un film. 
 
 = Progettazione Concettuale
 
@@ -614,7 +604,9 @@ Segue la traduzione dello schema E-R ristrutturato allo schema relazionale:
 #relation(
   "RegistaDelFilm",
   [#underline[TitoloFilm], #underline[AnnoDiProduzioneFilm], #underline[NomeRegista], #underline[CognomeRegista], #underline[DataDiNascitaRegista]],
-  [#fk {TitoloFilm, AnnoDiProduzioneFilm, NomeRegista, CognomeRegista, DataDiNascitaRegista} $arrow.r$ {Film.Titolo, Film.AnnoDiProduzione, Regista.Nome, Regista.Cognome, Regista.AnnoDiNascita}],
+  [#fk {TitoloFilm, AnnoFilm} $arrow.r$ {Film.TitoloFilm, Film.AnnoFilm}],
+  [#fk {NomeRegista, CognomeRegista, DataDiNascitaRegista} $arrow.r$ {Regista.Nome, Regista.Cognome, Regista.AnnoDiNascita}],
+
 )
 
 #relation(
@@ -688,7 +680,7 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
   - Inserimento di _Persona_
   - Cancellazione di _Attore_
   - Cancellazione di _Regista_
-- Ci può essere al massimo un noleggio attivo
+- Ci può essere al massimo un noleggio attivo per copia fisica di film
   - Inserimento in _Noleggio_
   - Modifica in _Noleggio_
 - Gli intervalli generati dalle date di inizio e di fine noleggio, per ogni copia fisica di un film, non devono sovrapporsi
@@ -699,10 +691,10 @@ sono riportate le azioni che potrebbero violare l'integrità della base di dati:
   - Modifica di _AziendaProduttrice_ nella relazione _Film_
   - Cancellazione in _Film_
 
-Notiamo che, per gli quanto riguardano gli intervalli generati dalle date
-relative ai noleggi, si ipotizza di lavorare con intervalli chiusi. Segue,
-quindi, che se un noleggio termina il giorno 10, un nuovo noleggio per la
-stessa copia fisica di un film può iniziare a partire dal giorno 11.
+Notiamo che, per quanto rigurda gli intervalli generati dalle date relative ai
+noleggi, si ipotizza di lavorare con intervalli chiusi. Segue, quindi, che se
+un noleggio termina il giorno 10, un nuovo noleggio per la stessa copia fisica
+di un film può iniziare a partire dal giorno 11.
 
 = Progettazione Fisica
 
@@ -717,7 +709,7 @@ Per quanto riguarda i vincoli _inter-relazionali_:
   cancellazione, si è optato per l'uso di clausole `ON DELETE NO ACTION` nella
   maggior parte delle relazioni; sebbene l'utilizzo di `ON DELETE CASCADE`
   mantenga comunque l'integrità della base di dati, si è preferito rifiutare le
-  operazioni di rimozione piuttosto che propagare le cancellazioni a cascata,
+  operazioni di cancellazione piuttosto che propagare le cancellazioni a cascata,
   cosa che comporterebbe la rimozione di grandi parti della base di dati (si
   immagini per esempio la cancellazione di una casa produttrice, che
   comporterebbe la cancellazione di tutti i film da essa prodotti).
@@ -964,7 +956,7 @@ L'operazione 6, risulta estremamente semplice in quanto usa l'attributo derivato
 dato che la ridondanza è stata mantenuta.
 
 Si nota che nel prototipo della base di dati è stato solo implementato il trigger
-per la rimozione di film. Segue che i valori ritornati dall'esecuzione della
+per la cancellazione di film. Segue che i valori ritornati dall'esecuzione della
 query nel prototipo non risulteranno aggiornati.
 
 #let text = read("db/operation_6__query_5.sql")
@@ -994,7 +986,7 @@ di `ON DELETE NO ACTION` per la maggior parte delle chiavi esterne, è necessari
 cancellare anche tutte le istanze correlate al film da cancellare. A causa delle
 dipendenze cicliche tra le relazioni, è necessario eseguire questa operazione in
 una unica transazione. \
-Questa operazione di rimozione è implementata per puro scopo dimostrativo, in
+Questa operazione di cancellazione è implementata per puro scopo dimostrativo, in
 quanto nella vera base di dati, la cancellazione di entità dovrebbe essere solo
 un caso eccezionale, e non una pratica comune.
 
